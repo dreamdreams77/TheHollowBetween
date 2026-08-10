@@ -4,6 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>The Hollow Between</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="icon-192.png">
+<meta name="theme-color" content="#0a0a14">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Hollow Between">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,500&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -405,6 +412,64 @@ body.touch #touchpad{display:block}
 </style>
 </head>
 <body>
+<script>
+// ---------------------------------------------------------------------
+// PWA install support + font-fallback detection. Both blocks are fully
+// self-contained (own IIFE scope, no shared variables), wrapped so a
+// failure here can never throw into the page or touch the game itself -
+// neither block references any game state, variable, or function defined
+// below. If you delete this whole <script> tag, the game plays exactly
+// the same; only "install as app" and the fallback-font note go away.
+// ---------------------------------------------------------------------
+
+// Registers the service worker for offline/installed play. Silently does
+// nothing on browsers without support (Safari's older PWA support, etc)
+// or if sw.js 404s (e.g. this file was opened directly from disk instead
+// of served over http/https, where service workers cannot register at
+// all) - "Add to Home Screen" without offline caching still works fine
+// in that case; this is a pure enhancement, never a requirement.
+(function () {
+  try {
+    if ("serviceWorker" in navigator && (location.protocol === "http:" || location.protocol === "https:")) {
+      window.addEventListener("load", function () {
+        navigator.serviceWorker.register("sw.js").catch(function () {});
+      });
+    }
+  } catch (e) {}
+})();
+
+// Detects whether the intended Google-hosted fonts actually loaded,
+// using the standard Font Loading API. This does NOT change which font
+// renders - the CSS fallback stacks (Georgia/serif, system-ui, etc,
+// defined in :root's --font-* variables) already handle that
+// automatically and instantly with zero JavaScript, which is why the
+// game looks correct either way even with this whole script removed.
+// What this adds is something visible to check/query: a
+// `data-fonts` attribute on <html> ("loaded" | "fallback" | "unknown"),
+// queryable from the browser console
+// (document.documentElement.dataset.fonts) or by anyone auditing the
+// page, without adding any UI, without blocking rendering, and with a
+// hard timeout so a slow/failed network request can never leave anyone
+// waiting on it.
+(function () {
+  var root = document.documentElement;
+  root.dataset.fonts = "unknown";
+  try {
+    if (!("fonts" in document)) return; // older browser - stays "unknown", CSS fallback still applies regardless
+    var timeout = new Promise(function (resolve) { setTimeout(function () { resolve(null); }, 2500); });
+    var check = Promise.all([
+      document.fonts.load("600 16px Cinzel"),
+      document.fonts.load("400 16px Inter")
+    ]).then(function () { return true; }).catch(function () { return false; });
+    Promise.race([check, timeout]).then(function (result) {
+      root.dataset.fonts = (result === true) ? "loaded" : "fallback";
+    });
+  } catch (e) {
+    // leave data-fonts="unknown" - CSS fallback stacks make this cosmetic-only either way
+  }
+})();
+</script>
+
 
 <!-- ============================================================
      TITLE SCREEN
