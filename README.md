@@ -1,120 +1,139 @@
 # The Hollow Between
 
-*An atmospheric expedition RPG/roguelite about a dying alien ecosystem, a missing person, and the walls between worlds.*
+A single-file browser RPG / roguelite. Everything - game, story, art, save
+system - lives in one `index.html`. No install, no build step, no internet
+connection needed. Open the file in a browser and play.
 
-The Lantern's crew is running expeditions into a cluster of collapsing biomes, mapping what's left, fighting what's guarding it, and slowly working out that none of it is natural. Something is pulling the worlds together. Someone already went through. You're the one who has to decide what to do about it.
+## Running it
 
-**[Play it in your browser](#running-locally)** — single file, no install, no build step.
+Double-click `index.html`, or drag it into a browser tab. That's it. It
+works fully offline and saves to your browser's local storage, so it
+remembers your progress between sessions on the same device.
 
----
+To move a save to a different device or browser: open the in-game menu (or
+"Restore a Save Code" on the title screen) and use Export/Import. It turns
+your save into a text code you can copy, send yourself, and paste back in
+anywhere.
 
-## What This Is
+## Controls
 
-The Hollow Between is a real-time exploration and combat RPG with roguelite expedition structure: you launch runs from a home base, explore procedurally-arranged biomes, fight and negotiate with an ecosystem that reacts to what you do to it, and carry permanent progress back with you between runs. It is a complete, playable, narratively-resolved game with six distinct endings, New Game+, and dozens of interlocking systems — not a tech demo and not a systems prototype.
+- **Move**: WASD or arrow keys
+- **Attack**: Space (hold to charge a stronger hit)
+- **Dodge**: X
+- **Interact**: E
+- **Companion ability**: Q
+- **Journal**: I
+- Touch controls (movement stick, Attack/Dodge buttons) appear
+  automatically on phones and tablets once you're in a game.
 
-**Setting:** the crew of a ship called the Lantern is investigating a "convergence" — a slow collision between separate worlds (a dying forest, alien ruins, crystal caverns, a haunted mansion, the void itself, and eventually a string of locations across the system) that is destroying all of them at once. A crew member, Wren, went missing through it before the game begins. What you find, who you trust, and what you're willing to trade shapes how — and whether — you get her back.
+## The core loop
 
-## Gameplay Concept
+You're stationed on **The Lantern**, a ship serving as your home base. From
+there you build up your character, then launch **expeditions** into one of
+several dying alien biomes. Each expedition spends energy, generates a
+run's worth of rooms, fights, and discoveries, and ends either when you
+choose to extract or when you die (death sends you home with roughly a
+third of your HP and half your run's loot - it's a setback, not a full
+reset).
 
-Each expedition is a self-contained run: pick a biome, explore it in real time, fight or avoid what lives there, and return to the Lantern before you run out of energy or HP. What you bring back — resources, cards, discoveries, quest progress — persists. What happens to you *during* a run (your position, your immediate danger) does not. Dying in the field costs you materials and gold and sends you home hurt, never permanently ends a run outright.
+Back at the ship you spend what you found: gear at the Forge, resources at
+the Quartermaster, resting at the Med Bay, and story/relationship time with
+your crew and companions. Then you launch again.
 
-The further and deeper you push into a biome, the more dangerous and rewarding it gets. Depth persists per biome across visits. Some content — bosses, rare encounters, entire biomes — is gated behind real prerequisites (a building constructed, a boss defeated, a level reached), not arbitrary unlock timers.
+## What's actually going on under the hood
 
-## Major Systems
+This game layers a lot of systems on top of that simple loop:
 
-**Exploration.** Real-time movement through procedurally-arranged tile-based biomes: the Dying Forest, Alien Ruins, Crystal Caverns, Haunted Mansion, and the Void Between on the ground, plus a full space program (Orbital Station, the Moon, Mars, the Asteroid Belt, Jupiter, and finally the Void Gate) once you've earned access to it. Weather, day/night, and season all shift the field visually and mechanically. Fog of war, hidden passages, and a minimap round it out.
+- **RPG progression** - attributes, XP, leveling, equipment with affixes,
+  a card/ability hand you draw from in combat.
+- **Roguelite structure** - each expedition is its own run with its own
+  risk; relics, boons, and difficulty scale with an Ascension level you
+  choose, similar to New Game+.
+- **Companions and factions** - three alien factions (the Choir of Glass,
+  the Marrow Courts, the Drift) and a handful of named companions and crew
+  members, each with their own trust, quests, and consequences that
+  persist across the whole save.
+- **A living campaign** - settlements, territories, and NPCs keep changing
+  state even while you're not looking at them; side quests grow out of
+  that simulation rather than being handed to you from a fixed list.
+- **The Convergence** - the game's ending system. Multiple distinct
+  endings (Seal, Destroy, Walk Away, and several earned "alternate" routes
+  like Reunion and Steward) become reachable depending on the alien
+  relationships and campaign choices you've made. There's a "Calculate
+  Trajectory" screen in the Command Deck that predicts where you're
+  headed.
 
-**Combat.** Real-time, not turn-based. Basic attacks, a dodge, and up to nine unlockable hotkey abilities (Whirlwind, Piercing Shot, Rally, Execute, Berserk Stance, Echo Ping, Void Step, Time Dilation, Calm Creature) layered on top of seven damage types (physical, fire, cold, shock, poison, void, spirit) with real counters. Creatures aren't reskins of each other — eleven distinct behavioral archetypes (ambusher, swarm, tank, sniper, pack hunter, and more) each demand a different approach, and major bosses run genuine multi-phase fights with telegraphed attacks and a changing weakness per phase.
+## The Drowned Observatory (and the rest of the "Guardian Acts")
 
-**Cards.** A supplementary combat layer: thirteen cards across four rarities, each resolved with a rarity-appropriate die roll (a fumble on a 1, a critical on the max roll, a "strong" band in between) rather than a flat guaranteed effect. Cards come from kills, chests, quest rewards, and leveling up.
+This is the thing you asked about, and it deserves its own section because
+it's genuinely a separate mini-game bolted onto the side of the main one,
+not part of the main story or the Convergence.
 
-**Equipment.** Twenty-one craftable items across three slots (weapon, armor, trinket), built from resources you gather in the field. Effects range from flat stat bonuses to conditional ones — a weapon that borrows its damage type from your last card played, armor that only kicks in below half HP, a trinket that makes crafting cheaper. Two late-game abilities (Salvage, Infusion) let you break gear down for materials or permanently upgrade it with essence.
+Tap **STORY / QUESTS** (available from the title screen or in-game) and
+you'll open the **Story Codex** - a five-act boss-rush mode called the
+Astral Descent. Each act is a distinct "cosmic" location with its own
+theme, its own house rule, and its own boss:
 
-**Discoveries.** Two linked systems: standalone field discoveries with their own short narrative text, and ten larger mysteries that need multiple related clues before they reveal a full page of story — the game doesn't explain itself up front, it lets you piece it together. A separate ecology-notes system rewards you for actually *witnessing* predator/prey relationships play out in the field, not just reading about them.
+| Act | Location | Rule | Boss |
+|---|---|---|---|
+| I | **The Drowned Observatory** | *Tides of Memory* - healing restores less at the end of a fight, but Memory Fragments restore more | The Drowned Astronomer |
+| II | The Bone Moon | *Gravitational Hunger* - repeated attacks hit harder, but movement gets riskier | The Pale Colossus |
+| III | The Infinite Garden | *Living Paths* - cleared rooms can mutate and return changed | The Gardener Without a Face |
+| IV | The Choir of Dead Stars | *Resonant Silence* - long combo chains get stronger, but breaking one empowers enemies | The Conductor |
+| V | The Place Outside the Map | *Reality Fracture* - events can rewrite rewards and rules mid-run | The Thing That Was Waiting |
 
-**Encounters.** Beyond normal creature spawns: sixteen-plus rare encounters gated by minimum depth, mid-run route events that change the rules for the rest of that expedition, environmental hazards (fire spreads across grass, water amplifies shock damage), traps, and biome-specific landmarks — some tied directly to quests.
+For each act, the Story Codex shows two small side quests (progress them
+with "Simulate Progress," then claim gold/essence once complete) and a
+**"Face the Guardian"** button that starts that act's boss fight - a
+simplified turn-based encounter (Strike / Resonance / Dodge) rather than
+the real-time combat used everywhere else in the game. Beating a Guardian
+grants a themed relic and advances you to the next act; beating all five
+unlocks a short "true ending" scene for this side mode specifically.
 
-**Progression.** Leveling, an ability tree spent with earned ability points across four categories (combat, exploration, creature, crafting), crew trust with three named NPCs (Pip, Rook, Sable) that unlocks real dialogue and permanent bonuses, faction standing with two factions that moves shop prices and enemy difficulty, and a base you build out room by room (Workshop, Laboratory, Habitat Bay, Greenhouse, Quartermaster, Equipment Forge, Med Bay, Training Room, Observatory, Portal Chamber) — several of which are required to unlock entire new biomes.
+**Why it's confusing:** there's also a separate **Astral Map** button that
+shows a room-by-room dungeon crawl for the same five acts, and a third,
+unrelated **Astral Route** overlay that quietly runs boon/card choices
+during your *normal* expeditions and happens to use similar "cosmic" art
+and language. These are three different systems from different points in
+the project's history that never got merged or visually distinguished from
+each other. None of it touches the main Convergence ending. If it feels
+disconnected from the main story, that's accurate - it is.
 
-**Endings.** Six of them, not two. Two are always available once you've earned the right to end the story at all; the other four are genuinely earned — by how far you've explored, who you've built trust with, and what you've actually understood about the people around you — not picked from a menu. New Game+ carries your perks, deck, and discoveries into a harder loop afterward, if you want to go back in.
+## Known quirks / notes for future changes
 
-## How to Play
+- This is one HTML file containing dozens of historically-added script
+  blocks (labeled things like `hb10`, `v21`, `hb29` in the source) rather
+  than one clean codebase. Later blocks sometimes patch or wrap functions
+  defined in earlier ones. When editing, search for *all* definitions of a
+  function name before assuming there's only one.
+- Floating buttons and panels that depend on an active character (shop,
+  crafting, the Command Deck, combat controls) are hidden until a game is
+  actually running, via a `pregame` class on `<body>`. Astral Map and
+  Story/Quests are the exception - they're self-contained and safe to use
+  from the title screen, so they're docked into the title screen's own
+  layout instead of hidden.
+- Alien-relationship faction standing (`hb21.factions`, small numbers,
+  drives which Convergence endings you can reach) and campaign-consequence
+  faction standing (`hb29`/`v25.factions`, -100 to 100, drives the
+  trajectory preview) are two different scales tracking the same three
+  factions. They're kept *coherent* with each other (either can unlock the
+  same ending) rather than merged into one number, since merging them
+  outright would break both systems' pacing.
 
-1. Open `index.html` in a modern browser (or visit the GitHub Pages link above).
-2. From the title screen, choose a build and begin.
-3. From the Lantern, launch an expedition into whichever biome is available to you.
-4. Explore, fight, collect, and return before you run out of energy or HP.
-5. Spend what you brought back at base: craft equipment, complete crew tasks, build new rooms, spend ability points.
-6. Repeat, pushing deeper and further out, until you've earned your way to the Bridge and made your choice.
+## Recent fixes
 
-Progress saves automatically to your browser's local storage — nothing leaves your machine, and there's no account or login.
-
-### Controls
-
-| Key | Action |
-|---|---|
-| `WASD` / Arrow keys | Move |
-| `Space` | Attack (double-tap for a heavy attack) |
-| `Q` | Companion ability |
-| `E` | Interact / examine |
-| `X` | Return to base |
-| `1`–`5` | Play a card |
-| `C` | Whirlwind *(once unlocked)* |
-| `Z` | Piercing Shot *(once unlocked)* |
-| `R` | Rally *(once unlocked)* |
-| `T` | Execute *(once unlocked)* |
-| `B` | Berserk Stance *(once unlocked)* |
-| `V` | Echo Ping *(once unlocked)* |
-| `F` | Void Step *(once unlocked)* |
-| `G` | Time Dilation *(once unlocked)* |
-| `H` | Calm Creature *(once unlocked)* |
-
-Touch controls (movement stick, tap-to-interact, contextual action buttons) are built in for phones and tablets — nothing above requires a keyboard or a mouse hover to reach.
-
-## Running Locally
-
-No build step, no dependencies, no server required.
-
-```bash
-git clone https://github.com/<your-username>/the-hollow-between.git
-cd the-hollow-between
-```
-
-Then either:
-- Double-click `index.html` to open it directly in a browser, **or**
-- Serve it locally if your browser is picky about local file access:
-  ```bash
-  python3 -m http.server 8000
-  # then open http://localhost:8000
-  ```
-
-That's it — everything the game needs (styling, logic, and even its sound effects, which are synthesized in-browser rather than loaded from audio files) lives in the one HTML file.
-
-## Project Structure
-
-```
-the-hollow-between/
-├── index.html          # the entire game — markup, styling, and logic in one file
-├── README.md            # this file
-├── LICENSE
-├── RELEASE_NOTES.md      # current version notes
-└── .gitignore
-```
-
-There is no separate `assets/`, `data/`, or `audio/` directory because none is needed: the game has no external images, fonts loaded from a CDN are used only as a progressive enhancement with full local fallbacks, and every sound effect is generated at runtime rather than played from a file. This is a deliberate, working design choice carried through the whole project, not an oversight.
-
-## Development Status
-
-This is a substantially complete, tested, playable release, not a prototype or a systems demo. All major systems listed above are implemented, connected to each other, and exercised by an automated regression pass covering the full loop — title through expedition, combat, cards, equipment, discoveries, quest completion, death and recovery, the full space program, all six endings, and New Game+ — before each release.
-
-See `RELEASE_NOTES.md` for what changed in the current version.
-
-## Known Limitations
-
-- Custom fonts are loaded from Google Fonts over HTTPS; the game is fully playable without internet access, but will render with system font fallbacks instead of its intended typefaces if the font request can't complete.
-- Content is deep but not infinite: creature, quest, and encounter variety is large but finite, as in any handcrafted game of this scope — repeated New Game+ cycles will surface familiar content with tougher numbers rather than endlessly new material.
-- Single save slot, stored in browser local storage — clearing site data for this page will clear your save. There's no cloud sync or export/import yet.
-
-## License
-
-See `LICENSE`. See `RELEASE_NOTES.md` for versioning and credit.
+- Fixed a crash that occurred on every fresh page load, before the title
+  screen even finished loading.
+- Added save export/import (text-code based, works on mobile) plus a
+  "Restore a Save Code" option on the title screen.
+- Expedition summary now shows biome, depth, relics gained, companion, and
+  an accurate cause of death (previously only kills/XP/gold/discoveries).
+- Added a short, skippable, milestone-based tutorial for first-time
+  characters; it never appears for saves that predate this feature.
+- Fixed the Story/Quests panel not closing once you'd started a Guardian
+  boss fight, and fixed "Face the Guardian" crashing outright.
+- Fixed several floating buttons (Astral Map, Story/Quests, Command Deck,
+  the shop/forge toolbar, on-screen combat controls) rendering on top of
+  the title screen before a game had started.
+- Fixed the Command Deck opening a blank panel when clicked with no
+  character yet created.
