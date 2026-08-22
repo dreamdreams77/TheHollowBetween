@@ -105,7 +105,8 @@ h1,h2,h3{font-family:var(--font-heading);font-weight:600;letter-spacing:.01em;ma
 #hud{position:fixed;inset:0;z-index:10;display:none;flex-direction:column;background:var(--bg-ship)}
 .topbar{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;padding:0 var(--sp-5);height:52px;border-bottom:1px solid var(--line-faint);background:linear-gradient(180deg,rgba(255,255,255,.02),transparent);gap:var(--sp-3)}
 .topbar-left{display:flex;align-items:center;gap:var(--sp-3);min-width:0}
-#navToggle{display:none;background:none;border:1px solid var(--line);color:var(--c-muted);border-radius:4px;padding:5px 10px;font-size:15px;line-height:1;cursor:pointer;flex:0 0 auto}
+#navToggle{position:relative;display:none;background:none;border:1px solid var(--line);color:var(--c-muted);border-radius:4px;padding:5px 10px;font-size:15px;line-height:1;cursor:pointer;flex:0 0 auto}
+#navToggle .badge{position:absolute;top:-5px;right:-5px;background:var(--c-amber);color:#0a0e13;border-radius:99px;min-width:15px;height:15px;padding:0 3px;font-size:9px;font-weight:700;line-height:15px;text-align:center}
 .topbar-brand{font-family:var(--font-display);font-size:14px;letter-spacing:.22em;color:var(--c-ivory);opacity:.9;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .topbar-meta{display:flex;align-items:center;gap:var(--sp-3);font-family:var(--font-mono);font-size:11px;color:var(--c-muted);letter-spacing:.05em;flex:0 1 auto;min-width:0;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
 .topbar-meta::-webkit-scrollbar{display:none}
@@ -257,7 +258,7 @@ h1,h2,h3{font-family:var(--font-heading);font-weight:600;letter-spacing:.01em;ma
 /* ============================================================
    MODALS, ENHANCED
    ============================================================ */
-#modal{position:fixed;inset:0;z-index:30;display:none;align-items:center;justify-content:center;background:rgba(5,7,8,.7);backdrop-filter:blur(4px)}
+#modal{position:fixed;inset:0;z-index:10005;display:none;align-items:center;justify-content:center;background:rgba(5,7,8,.7);backdrop-filter:blur(4px);transform:translateZ(0)}
 #modal.show{display:flex;animation:modalIn .2s ease}
 @keyframes modalIn{0%{opacity:0}100%{opacity:1}}
 .modal-inner{position:relative;background:linear-gradient(165deg,var(--bg-panel-elev) 0%,var(--bg-panel) 40%);border:1px solid var(--line-strong);border-radius:12px;padding:var(--sp-6);max-width:620px;max-height:84vh;overflow-y:auto;width:90%;box-shadow:0 24px 80px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.05);animation:modalSlide .3s cubic-bezier(.16,1,.3,1)}
@@ -404,45 +405,9 @@ body.touch:not(.pregame) #touchpad{display:block}
 .rulebook-table td{color:var(--c-muted)}
 .rulebook-table td b{color:var(--c-ivory)}
 
-/* ---- Tutorial overlay: compact, dismissible, mobile-safe ---- */
-#tutorialCard{
-  position:fixed;
-  left:50%;
-  bottom:calc(18px + env(safe-area-inset-bottom,0px));
-  transform:translateX(-50%);
-  width:min(420px, calc(100vw - 24px));
-  background:rgba(10,14,20,.96);
-  border:1px solid rgba(127,212,238,.35);
-  border-radius:14px;
-  padding:14px 16px;
-  box-shadow:0 12px 40px rgba(0,0,0,.55);
-  z-index:25;
-  font-family:var(--font-body);
-  color:var(--c-ivory);
-  display:none;
-}
-#tutorialCard.show{display:block}
-#tutorialCard .tut-kicker{font:600 10px/1 var(--font-mono);letter-spacing:.12em;color:var(--c-cyan);text-transform:uppercase;margin-bottom:6px}
-#tutorialCard .tut-title{font-size:15px;font-weight:600;margin-bottom:6px}
-#tutorialCard .tut-body{font-size:12.5px;line-height:1.55;color:var(--c-muted);margin-bottom:12px}
-#tutorialCard .tut-row{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
-#tutorialCard button{
-  font:600 11px/1 var(--font-mono);
-  letter-spacing:.04em;
-  padding:8px 12px;
-  min-height:36px;
-  border-radius:8px;
-  border:1px solid rgba(255,255,255,.18);
-  background:rgba(255,255,255,.05);
-  color:var(--c-muted);
-  cursor:pointer;
-}
-#tutorialCard button.tut-primary{border-color:var(--c-cyan);color:var(--c-cyan)}
-@media(max-width:480px){
-  #tutorialCard{bottom:calc(12px + env(safe-area-inset-bottom,0px));padding:12px 14px}
-  #tutorialCard .tut-title{font-size:14px}
-  #tutorialCard .tut-body{font-size:12px}
-}
+/* ---- Tutorial: now lives in the ☰ menu (see "How to Play" navbtn and
+   openTutorialMenu()) instead of a floating card fighting for space with
+   the other fixed bottom-of-screen UI on mobile. ---- */
 /* ---- Fix: several floating utility buttons/status widgets (Astral Map,
    Story/Quests, the Codex/Quartermaster/Forge/Factions/Ascension toolbar,
    the "EXPEDITION SYSTEMS ONLINE" status text, the difficulty-director
@@ -525,6 +490,7 @@ body.pregame .hb-ingame-floater{display:none!important}
 @keyframes v9fracture{0%,100%{transform:translateX(0)}50%{transform:translateX(8px)}}
 </style>
 
+<style id="v33-mobile-hardening">
 /* ============================================================
    V33 UNIFIED MOBILE HARDENING
    Single-file phone-first pass. No separate desktop dependency.
@@ -581,8 +547,32 @@ button,.btn,.navbtn,.card-slot,.opt,.tab,.perk-card,.tbtn{min-height:44px;touch-
   .stage{min-height:100dvh;height:100dvh;}
 }
 
+/* ROTATE PROMPT: the in-game stage is a fixed 16:9 canvas, so on a tall
+   portrait phone it only fills a small strip of the screen with dead
+   space above/below. Rather than distort or crop the canvas, prompt
+   touch users to rotate to landscape while actually in a run. Menus
+   (title, character select, journal, etc.) already reflow fine in
+   portrait, so this is scoped to body:not(.pregame) only. */
+#rotatePrompt{display:none}
+@media (orientation:portrait) and (pointer:coarse){
+  body.touch:not(.pregame):not(.rotate-dismissed) #rotatePrompt{display:flex}
+}
+#rotatePrompt{position:fixed;inset:0;z-index:99999;flex-direction:column;align-items:center;justify-content:center;gap:var(--sp-4);text-align:center;padding:var(--sp-6);
+  background:linear-gradient(180deg,#0a0f15 0%,#060809 60%,#050607 100%);color:var(--c-ivory)}
+#rotatePrompt .rp-icon{font-size:44px;line-height:1;color:var(--c-cyan);animation:rpSpin 1.8s ease-in-out infinite}
+@keyframes rpSpin{0%,100%{transform:rotate(0deg)}50%{transform:rotate(90deg)}}
+#rotatePrompt p{max-width:320px;color:var(--c-muted);font-size:14px;line-height:1.6;margin:0}
+#rotatePrompt button{min-height:44px;padding:10px 18px;border-radius:8px;border:1px solid var(--line);background:rgba(255,255,255,.04);color:var(--c-muted);font-family:var(--font-body);font-size:13px;cursor:pointer;touch-action:manipulation}
+#rotatePrompt button:active{background:rgba(255,255,255,.08)}
+</style>
+
 </head>
 <body class="pregame">
+<div id="rotatePrompt" role="dialog" aria-label="Rotate device">
+  <div class="rp-icon">⟳</div>
+  <p>The Hollow Between plays best in landscape. Turn your device sideways for the full view.</p>
+  <button id="rotatePromptDismiss" type="button">Continue in portrait</button>
+</div>
 <script>
 // ---------------------------------------------------------------------
 // PWA install support + font-fallback detection. Both blocks are fully
@@ -668,7 +658,7 @@ button,.btn,.navbtn,.card-slot,.opt,.tab,.perk-card,.tbtn{min-height:44px;touch-
 <div id="hud" data-biome="ship">
   <div class="topbar">
     <div class="topbar-left">
-      <button id="navToggle" aria-label="Menu" onclick="toggleSidenav()">☰</button>
+      <button id="navToggle" aria-label="Menu" onclick="toggleSidenav()">☰<span id="navToggleBadge" class="badge hidden">!</span></button>
       <div class="topbar-brand">THE HOLLOW BETWEEN</div>
     </div>
     <div class="topbar-meta">
@@ -686,6 +676,7 @@ button,.btn,.navbtn,.card-slot,.opt,.tab,.perk-card,.tbtn{min-height:44px;touch-
       <div class="navgroup">
         <div class="navlabel">Character</div>
         <button class="navbtn" id="charNavBtn" onclick="navCharacter()">Character</button>
+        <button class="navbtn" onclick="openTutorialMenu()">How to Play<span id="tutorialBadge" class="badge hidden">!</span></button>
         <button class="navbtn" onclick="openJournal()">Journal</button>
         <button class="navbtn" onclick="openRuleBook()">Rule Book</button>
         <button class="navbtn" onclick="openPerks()">Perks<span id="perkBadge" class="badge hidden">!</span></button>
@@ -707,6 +698,22 @@ button,.btn,.navbtn,.card-slot,.opt,.tab,.perk-card,.tbtn{min-height:44px;touch-
         <button class="navbtn" onclick="openBiomeSelect()">Launch</button>
         <button class="navbtn" onclick="openArchive()">Captain's Log</button>
         <button class="navbtn" onclick="openBridge()">The Bridge</button>
+      </div>
+      <div class="navgroup">
+        <div class="navlabel">Codex</div>
+        <!-- BUGFIX: Codex/Quartermaster/Forge/Factions/Ascension used to
+             only exist as 5 separate floating buttons stacked in the
+             top-right corner. On a phone-width viewport there wasn't
+             enough vertical room for that stack to sit anywhere without
+             overlapping either the Attack/Dodge/Ability buttons (when
+             pinned to the bottom) or the main expedition panel (when
+             pinned near the top) - moving the corner just moved which
+             thing it covered. The panel these buttons open already has
+             its own internal tab bar (Codex/Build/Forge/Shop/Quests/
+             Factions/Companions/Meta/Run), so a single entry point here
+             reaches everything the floating stack did, with no
+             overlap risk on any screen size. -->
+        <button class="navbtn" onclick="if(window.HB10)HB10.open('codex')">Codex &amp; Ascension</button>
       </div>
     </nav>
     <div class="stage">
@@ -751,17 +758,6 @@ button,.btn,.navbtn,.card-slot,.opt,.tab,.perk-card,.tbtn{min-height:44px;touch-
 
 <!-- TOAST -->
 <div id="toast"></div>
-
-<!-- TUTORIAL -->
-<div id="tutorialCard" role="dialog" aria-live="polite">
-  <div class="tut-kicker" id="tutKicker">Tutorial</div>
-  <div class="tut-title" id="tutTitle"></div>
-  <div class="tut-body" id="tutBody"></div>
-  <div class="tut-row">
-    <button onclick="skipTutorial()">Skip Tutorial</button>
-    <button class="tut-primary" onclick="dismissTutorialStep()">Got it</button>
-  </div>
-</div>
 
 <!-- TOUCH CONTROLS -->
 <div id="touchpad">
@@ -1295,9 +1291,10 @@ function initInput(){
       stickZone.classList.remove('active','sprint');
       stickKnob.style.transform='translate(-50%,-50%)';
     };
-    stickZone.addEventListener('touchstart',e=>{e.preventDefault();const t=e.touches[0];handleStart(t.clientX,t.clientY);});
-    stickZone.addEventListener('touchmove',e=>{e.preventDefault();const t=e.touches[0];handleMove(t.clientX,t.clientY);});
-    stickZone.addEventListener('touchend',e=>{e.preventDefault();handleEnd();});
+    let stickTouchId=null;
+    stickZone.addEventListener('touchstart',e=>{e.preventDefault();const t=e.changedTouches[0];stickTouchId=t.identifier;handleStart(t.clientX,t.clientY);});
+    stickZone.addEventListener('touchmove',e=>{e.preventDefault();for(const t of e.changedTouches){if(t.identifier===stickTouchId){handleMove(t.clientX,t.clientY);break;}}});
+    stickZone.addEventListener('touchend',e=>{e.preventDefault();for(const t of e.changedTouches){if(t.identifier===stickTouchId){stickTouchId=null;handleEnd();break;}}});
   }
   const setupBtn=(id,fn)=>{
     const btn=document.getElementById(id);
@@ -1420,8 +1417,8 @@ function generateBase(){
     {x:20,y:29,type:'training',label:"Training Room",built:true},
     {x:32,y:29,type:'crew',label:"Crew Quarters",built:true},
     {x:41,y:29,type:'bridge',label:"The Bridge",built:true},
-    {x:24,y:18,type:'observatory',label:"Observatory",built:S.flags.observatoryBuilt||false,cost:{crystal:4,metal:3}},
-    {x:26,y:18,type:'portal',label:"Portal Chamber",built:S.flags.portalBuilt||false,cost:{crystal:6,metal:4}}
+    {x:20,y:18,type:'observatory',label:"Observatory",built:S.flags.observatoryBuilt||false,cost:{crystal:4,metal:3}},
+    {x:29,y:18,type:'portal',label:"Portal Chamber",built:S.flags.portalBuilt||false,cost:{crystal:6,metal:4}}
   ];
   return {map,w,h,rooms,markers:baseMarkers};
 }
@@ -5466,6 +5463,7 @@ function updateHud(){
 
   // perk badge
   updatePerkBadge();
+  if(typeof updateTutorialBadge==='function') updateTutorialBadge();
   if(typeof updateTrackedQuestHud==='function') updateTrackedQuestHud();
 }
 window.updateHud=updateHud;
@@ -5543,6 +5541,9 @@ const TUTORIAL_STEPS = {
   controls: {
     title: "Welcome to The Hollow Between",
     body: "Move with WASD or arrow keys. Space attacks (hold to charge a stronger hit). X dodges through danger. E interacts with objects and creatures. Q calls your active companion. I opens your journal. You'll also draw combat cards - play them from the hand at the bottom of the screen for special moves."
+    + (IS_TOUCH_DEVICE
+      ? "<br><br>On phone: touch and drag anywhere on screen to move - a virtual stick appears under your finger. Tap once, without moving, to interact. Use the ATTACK, DODGE and ABILITY buttons in the bottom-right corner for combat (ABILITY calls your active companion, same as Q on keyboard). You can also double-tap to attack or swipe up to dodge. Menu items like your Journal and Story/Quests are always reachable by tapping the ☰ menu and the buttons docked on screen - no keyboard needed."
+      : "<br><br>Playing on a phone instead? Touch and drag anywhere to move, tap to interact, and use the ATTACK / DODGE / ABILITY buttons in the bottom-right corner for combat - everything here works the same way with touch.")
   },
   expedition: {
     title: "Launching an Expedition",
@@ -5581,8 +5582,8 @@ window.dockTitleUtilities=dockTitleUtilities;
 
 function undockTitleUtilities(){
   const restore={
-    'hb4-open':'position:fixed;right:18px;top:86px;z-index:9997;border:1px solid #48547e;background:#0b1122;color:#cbd4ff;border-radius:10px;padding:9px 12px;font:11px system-ui;letter-spacing:.1em;cursor:pointer',
-    'hb5-open':'position:fixed;right:18px;top:124px;z-index:9997;border:1px solid rgba(151,177,255,.3);background:rgba(8,12,28,.9);color:#d9e1ff;border-radius:10px;padding:9px 12px;font:11px system-ui;letter-spacing:.1em;cursor:pointer;backdrop-filter:blur(8px)'
+    'hb4-open':'position:fixed;right:18px;top:135px;z-index:9997;border:1px solid #48547e;background:#0b1122;color:#cbd4ff;border-radius:10px;padding:9px 12px;font:11px system-ui;letter-spacing:.1em;cursor:pointer',
+    'hb5-open':'position:fixed;right:18px;top:173px;z-index:9997;border:1px solid rgba(151,177,255,.3);background:rgba(8,12,28,.9);color:#d9e1ff;border-radius:10px;padding:9px 12px;font:11px system-ui;letter-spacing:.1em;cursor:pointer;backdrop-filter:blur(8px)'
   };
   Object.keys(restore).forEach(id=>{
     const el=document.getElementById(id);
@@ -5607,29 +5608,63 @@ function showTutorialStep(id){
   const step = TUTORIAL_STEPS[id];
   if(!step) return;
   S.flags.tutorialSeenSteps[id] = true;
-  S._activeTutorialStep = id;
-  const card = document.getElementById('tutorialCard');
-  if(!card) return;
-  document.getElementById('tutTitle').textContent = step.title;
-  document.getElementById('tutBody').textContent = step.body;
-  card.classList.add('show');
+  // CHANGE: this used to pop a floating card over the play area. On the
+  // phone-sized viewport this is actually played on, that card ended up
+  // fighting the quick-access toolbar and combat buttons for the same
+  // few square inches of screen (see the z-index bugfix history above).
+  // Tutorial content now lives in the ☰ menu instead - flag this step as
+  // pending (unread) so "How to Play" can badge itself, and let the
+  // player read it whenever they open the menu rather than forcing it
+  // into the middle of play.
+  S.flags.tutorialPendingSteps = S.flags.tutorialPendingSteps || [];
+  if(!S.flags.tutorialPendingSteps.includes(id)) S.flags.tutorialPendingSteps.push(id);
+  updateTutorialBadge();
+  if(typeof toast==='function')toast('New tip added - check Menu \u2192 How to Play.','cyan');
   save();
 }
 window.showTutorialStep = showTutorialStep;
 
+function updateTutorialBadge(){
+  const pending=(S&&S.flags&&S.flags.tutorialPendingSteps)||[];
+  const show=pending.length>0;
+  const navBadge=document.getElementById('tutorialBadge');
+  if(navBadge)navBadge.classList.toggle('hidden',!show);
+  const menuBadge=document.getElementById('navToggleBadge');
+  if(menuBadge)menuBadge.classList.toggle('hidden',!show);
+}
+window.updateTutorialBadge = updateTutorialBadge;
+
+function openTutorialMenu(){
+  const order=['controls','expedition','returned'];
+  const seen=(S&&S.flags&&S.flags.tutorialSeenSteps)||{};
+  const rows=order.map(id=>{
+    const step=TUTORIAL_STEPS[id];
+    const unlocked=!!seen[id];
+    return '<div class="opt" style="cursor:default'+(unlocked?'':';opacity:.4')+'"><strong>'+step.title+'</strong><span>'+(unlocked?step.body:'Not reached yet - this unlocks as you play.')+'</span></div>';
+  }).join('');
+  openModal('<button class="close" onclick="closeModal()">\u2715</button><h2>How to Play</h2><div class="sub">Tips unlock as you reach each milestone.</div><div class="row">'+rows+'</div><div class="row"><button class="opt" onclick="skipTutorial()"><strong>Turn off tutorial tips</strong><span>You already know the ropes.</span></button></div>');
+  if(S){ S.flags.tutorialPendingSteps=[]; save(); }
+  updateTutorialBadge();
+}
+window.openTutorialMenu = openTutorialMenu;
+
 function dismissTutorialStep(){
-  const card = document.getElementById('tutorialCard');
-  if(card) card.classList.remove('show');
+  // Kept for compatibility with existing callers (e.g. returnToTitle's
+  // cleanup). There's no floating card to hide any more - just make sure
+  // the menu badge reflects the (now absent) state.
   if(S) S._activeTutorialStep = null;
+  updateTutorialBadge();
 }
 window.dismissTutorialStep = dismissTutorialStep;
 
 function skipTutorial(){
   if(S){
     S.flags.tutorialSkipped = true;
+    S.flags.tutorialPendingSteps = [];
     save();
   }
-  dismissTutorialStep();
+  updateTutorialBadge();
+  closeModal();
 }
 window.skipTutorial = skipTutorial;
 
@@ -12005,7 +12040,7 @@ function openRuleBook(){
   html += '<div>F: Void Step (if unlocked)</div>';
   html += '<div>G: Time Dilation (if unlocked)</div>';
   html += '<div>H: Calm Creature (if unlocked)</div>';
-  html += '<div style="margin-top:8px;color:var(--c-cyan)">On a phone: the stick in the bottom-left moves you. The circular buttons in the bottom-right are Interact, Attack, Dodge, and your companion ability - they do exactly what E, Space, X, and Q do on a keyboard.</div>';
+  html += '<div style="margin-top:8px;color:var(--c-cyan)">On a phone: touch and drag anywhere to move - a virtual stick appears under your finger. Tap once, without moving, to interact (same as E). The three circular buttons in the bottom-right are Ability, Attack, and Dodge, matching Q, Space, and X on a keyboard. You can also double-tap to attack or swipe up to dodge.</div>';
   html += '</div></div>';
 
   html += '<div class="entry"><span class="entry-name">Damage Types</span><div class="entry-detail">';
@@ -12054,6 +12089,21 @@ function openRuleBook(){
   html += '<div>Tap a quest in the Quests panel to track it - its progress follows you into the field.</div>';
   html += '</div></div>';
 
+  html += '<div class="entry"><span class="entry-name">Astral Descent and Guardians</span><div class="entry-detail">';
+  html += '<div>The Astral Map (top-right, in the field) is a separate run through five Acts - the Drowned Observatory, the Bone Moon, the Infinite Garden, the Choir of Dead Stars, and the Place Outside the Map. Each Act is a node map of Combat, Elite, Relic, Event, and Anomaly rooms ending in a Guardian.</div>';
+  html += '<div>Guardian fights are turn-based: Strike for reliable damage, Resonance for a bigger hit, or Dodge to reduce what comes back at you. Guardians have three HP-gated phases that change their behavior as the fight goes on.</div>';
+  html += '<div>The Story/Quests board (also docked top-right) tracks two Side Quests per Act tied to that Act\'s story. Use SIMULATE PROGRESS to advance one, then CLAIM once it reaches 3/3 for gold, essence, and the reward listed on the card.</div>';
+  html += '<div>Defeating a Guardian grants an Act relic and opens the next Act. The fifth Guardian unlocks the true ending.</div>';
+  html += '</div></div>';
+
+  html += '<div class="entry"><span class="entry-name">Roguelite Layer</span><div class="entry-detail">';
+  html += '<div>Each expedition now opens with an Oath - a choice of run-specific risk/reward rules. Oaths only affect the current run and are separate from the perk system.</div>';
+  html += '<div>While in the field, a Resolve/Score/Echo bar tracks the run. Reward, Event, and Elite rooms offer a Cosmic Boon - pick one to shape how the rest of that run plays.</div>';
+  html += '<div>Echoes persist across expeditions and are spent at the Training Room on permanent Legacies - lasting identities like extra light radius, cheaper crafting, or a guardian-angel revive.</div>';
+  html += '<div>Memories are story fragments that surface automatically as you progress through the main chapters - check for a brief callout when one appears.</div>';
+  html += '<div>Certain relic pairs worn together unlock a bonus Synergy effect on top of their individual stats - equipping both pieces is enough, nothing extra to activate.</div>';
+  html += '</div></div>';
+
   html += '<div class="entry"><span class="entry-name">Standing</span><div class="entry-detail">';
   html += '<div>Some choices - sparing a wounded creature, taking a memorial stone, mourning the dead - shift your standing with the void Entities and the remnants.</div>';
   html += '<div>Void Entities: poor standing makes void-aligned creatures hit harder. Good standing softens them.</div>';
@@ -12096,7 +12146,7 @@ if (_origInitInputPatch) {
   // We can't easily patch initInput since it sets up event listeners,
   // but we can add a separate listener for new ability hotkeys
   window.addEventListener('keydown', (e) => {
-    if (S.mode !== 'field') return;
+    if (!S || S.mode !== 'field') return;
     if (e.key === 'c' || e.key === 'C') {
       if (S.unlockedAbilities && S.unlockedAbilities.includes('whirlwind')) {
         executeAbility('whirlwind');
@@ -15157,7 +15207,7 @@ const QUEST_CHAINS = [
   {id:'ecologist_2', name:'Find the Hunter', biome:'forest', type:'discover', target:'forest_heart_clearing',
    desc:'Track whatever is hunting the glowmice to their heart clearing.',
    reward:{xp:30, card:'shield_wall'}, unlocks:'ecologist_3'},
-  {id:'ecologist_3', name:'Night Owl Overpopulation', biome:'forest', type:'eliminate', target:'night_owl', count:3,
+  {id:'ecologist_3', name:'Night Owl Overpopulation', biome:'forest', type:'eliminate', target:'nightowl', count:3,
    desc:'The night owls have no predators left. Their numbers are destroying the forest.',
    reward:{xp:40, gold:50, perk:true}, unlocks:null},
 
@@ -15238,7 +15288,7 @@ const QUEST_CHAINS = [
   {id:'void_2', name:'The Fragment Wall', biome:'ruins', type:'discover', target:'fragment_wall',
    desc:'Find the Fragment Wall where the biomes overlap. The void is thin there.',
    reward:{xp:35, card:'void_rift'}, unlocks:'void_3'},
-  {id:'void_3', name:'The Void Drifter', biome:'ruins', type:'eliminate', target:'void_drifter', count:2,
+  {id:'void_3', name:'The Void Drifter', biome:'ruins', type:'eliminate', target:'voiddrifter', count:2,
    desc:'The void drifters are leaking through. Close the gaps.',
    reward:{xp:45, gold:50, perk:true}, unlocks:null},
 
@@ -16815,6 +16865,14 @@ function showRoute(){
   const relics=h.relics.length?h.relics.map(id=>`<div class="hb-statline"><span>${relic(id).icon} ${relic(id).name}</span><b>${relic(id).tag}</b></div>`).join(''):'<div class="sub">No relics yet. The first elite or route cache will change that.</div>';
   openModal(`<button class="close" onclick="closeModal()">✕</button><h2>Expedition Route</h2><div class="sub">Act ${h.act} · Room ${Math.min(h.room+1,h.rooms)} of ${h.rooms}. The route reshapes around your choices.</div><div class="hb-route-line" style="margin:16px 0 22px">${nodes.join('')}</div><h3 style="color:var(--c-amber);font-family:var(--font-display);margin-bottom:8px">Relic Loadout</h3>${relics}<div style="height:10px"></div><button class="opt" onclick="HB.routeChoice()">Reveal the next fork<span>Choose a boon, risk, or elite fight.</span></button>`);
 }
+// BUGFIX: showRoute() is called as HB.showRoute() from the "Open Route Map"
+// button in the Expedition Codex and from this modal's own onclick, but it
+// was only ever defined as a bare global function - never attached to the
+// HB object like its siblings (HB.routeChoice, HB.pickRoute, HB.takeRelic
+// just above/below it). Every one of those calls threw "HB.showRoute is
+// not a function". The 'r' key shortcut worked because it calls the plain
+// global showRoute() directly, which is why this went unnoticed there.
+HB.showRoute=showRoute;
 HB.routeChoice=function(){
   ensureState();
   const choices=[
@@ -17271,20 +17329,46 @@ function type(t){if(t==='boss')return TYPES[5];if(t==='elite')return TYPES[1];if
 function open(){document.getElementById('hb4-root').classList.add('open');document.getElementById('hb4-root').setAttribute('aria-hidden','false');render()}
 function close(){document.getElementById('hb4-root').classList.remove('open');document.getElementById('hb4-root').setAttribute('aria-hidden','true')}
 function toast(x){let e=document.getElementById('hb4-toast');e.textContent=x;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),1700)}
-function choose(node){if(node.r!==st.room)return toast(node.r<st.room?'That path is behind you.':'That path is beyond the current threshold.');st.visited.push(node.id);if(node.type==='boss'){if(st.act<4){toast('Guardian defeated. The next region opens...');st.act++;st.room=0;buildMap();render()}else{toast('THE HOLLOW REMEMBERS YOU. FINAL DESCENT COMPLETE.')}}else{st.room++;render();toast(node.type==='event'?'The cosmos noticed you.':'Route chosen: '+type(node.type)[1])}}
+function choose(node){if(node.r!==st.room)return toast(node.r<st.room?'That path is behind you.':'That path is beyond the current threshold.');st.visited.push(node.id);if(node.type==='boss'){
+ // BUGFIX: this used to fake an instant "Guardian defeated" here and
+ // silently advance the act, without ever running the real Guardian
+ // encounter (the arena/HP/phases system defined further down in the
+ // HB5/HB6 scripts - the same fight the panel's "ACT GUARDIAN" button
+ // triggers via HB4.chooseBoss). Because it never closed this map either,
+ // the modal was left sitting open on top of the whole page afterward,
+ // blocking every button underneath it. Route this node into the real
+ // fight instead, and close the map so the player can actually see and
+ // play it; the act now only advances for real once HB6's victory() runs
+ // after the Guardian is genuinely defeated.
+ //
+ // BUGFIX 2: actualStart() (the real fight) silently no-ops if there's no
+ // active expedition (window.S is null) or if the boss creature fails to
+ // spawn - it just returns, with no error and no fallback. Combined with
+ // closing this map unconditionally, that produced a dead screen: map
+ // gone, no fight, no message ("nothing happens"). Guard the first case
+ // up front, and confirm the fight actually started before treating this
+ // as handled - if it didn't, reopen the map and say why instead of
+ // leaving a blank screen.
+ if(!window.S){toast('Start an expedition before you can face the Guardian.');return}
+ close();
+ if(window.HB5&&typeof HB5.boss==='function')HB5.boss();
+ else if(window.HB6&&typeof HB6.start==='function')HB6.start();
+ else{toast('Guardian defeated. The next region opens...');if(st.act<4){st.act++;st.room=0;buildMap();render()}else{toast('THE HOLLOW REMEMBERS YOU. FINAL DESCENT COMPLETE.')}return}
+ if(!(window.HB6&&typeof HB6.isActive==='function'&&HB6.isActive())){open();toast('The Guardian could not be reached. Try again once your expedition is underway.')}
+}else{st.room++;render();toast(node.type==='event'?'The cosmos noticed you.':'Route chosen: '+type(node.type)[1])}}
 function render(){let a=ACTS[st.act];document.getElementById('hb4-title').textContent=a.name;document.getElementById('hb4-desc').textContent=a.desc+' · '+a.rule;document.getElementById('hb4-actnum').textContent='ACT '+(st.act+1)+' / 5';document.getElementById('hb4-actname').textContent=a.name;document.getElementById('hb4-room').textContent='ROOM '+Math.min(12,st.room+1)+' / 12';document.getElementById('hb4-prog').style.width=((st.room/11)*100)+'%';let ns=document.getElementById('hb4-nodes');ns.innerHTML='';let lines=document.getElementById('hb4-lines');lines.innerHTML='';let positions=[];st.map.forEach((row,r)=>{row.forEach((n,i)=>{let x=10+(r/11)*80,y=row.length===1?50:25+i*50;positions.push({x,y});if(r>0){let prev=st.map[r-1];prev.forEach((p,pi)=>{let px=10+((r-1)/11)*80,py=prev.length===1?50:25+pi*50;if(Math.abs(py-y)<48){let line=document.createElementNS('http://www.w3.org/2000/svg','line');line.setAttribute('x1',px*10);line.setAttribute('y1',py*5.3);line.setAttribute('x2',x*10);line.setAttribute('y2',y*5.3);line.setAttribute('class','hb4-line');lines.appendChild(line)}})}let q=type(n.type);let d=document.createElement('button');d.className='hb4-node '+(r<st.room?'done ':'')+(r===st.room?'current ':'')+(r>st.room?'locked ':'');d.style.left=x+'%';d.style.top=y+'%';d.innerHTML='<span class="hb4-icon">'+q[0]+'</span><span class="hb4-nlabel">'+q[1]+'</span>';d.onclick=()=>choose(n);ns.appendChild(d)})});
 let p=document.getElementById('hb4-panel');let cur=st.map[st.room]||[];if(st.room>=11)p.innerHTML='<div class="hb4-choice" onclick="HB4.chooseBoss()"><span class="hb4-tag">ACT GUARDIAN</span><b>★ '+a.boss+'</b><small>The threshold has opened. Defeat the Guardian to descend into the next cosmic region.</small></div>';else p.innerHTML='<div class="hb4-choices">'+cur.map(n=>{let q=type(n.type);return '<button class="hb4-choice" onclick="HB4.choose(\''+n.id+'\')"><span class="hb4-tag">'+q[1]+'</span><b>'+q[0]+' '+q[2]+'</b><small>'+q[3]+' · Reward: '+q[4]+'</small></button>'}).join('')+'</div>'}
 function chooseById(id){let n=st.map.flat().find(x=>x.id===id);if(n)choose(n)}
 window.HB4={open,close,choose:(id)=>chooseById(id),chooseBoss:()=>{let n=st.map[11][0];choose(n)}};
 window.HB4State=st;
-window.addEventListener('load',()=>{buildMap();setTimeout(()=>{let b=document.createElement('button');b.id='hb4-open';b.textContent='✦ ASTRAL MAP';b.style.cssText='position:fixed;right:18px;top:86px;z-index:9997;border:1px solid #48547e;background:#0b1122;color:#cbd4ff;border-radius:10px;padding:9px 12px;font:11px system-ui;letter-spacing:.1em;cursor:pointer';b.onclick=open;document.body.appendChild(b);if(typeof dockTitleUtilities==='function')dockTitleUtilities();},900)});
+window.addEventListener('load',()=>{buildMap();setTimeout(()=>{let b=document.createElement('button');b.id='hb4-open';b.textContent='✦ ASTRAL MAP';b.style.cssText='position:fixed;right:18px;top:135px;z-index:9997;border:1px solid #48547e;background:#0b1122;color:#cbd4ff;border-radius:10px;padding:9px 12px;font:11px system-ui;letter-spacing:.1em;cursor:pointer';b.onclick=open;document.body.appendChild(b);if(typeof dockTitleUtilities==='function')dockTitleUtilities();},900)});
 })();
 </script>
 
 <style id="hb5-visuals">
 :root{--void:#050714;--glass:rgba(10,15,34,.78);--line:rgba(151,177,255,.24);--star:#dfe8ff;--gold:#e7c878;--violet:#9b8cff;--cyan:#65d8ff}
 body:after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9990;background:radial-gradient(circle at 50% 35%,transparent 35%,rgba(0,0,0,.28) 72%,rgba(0,0,0,.62));mix-blend-mode:multiply}
-#hb5-cosmos{position:fixed;inset:0;z-index:10001;display:none;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 40%,rgba(73,60,145,.22),rgba(2,4,13,.96) 65%);backdrop-filter:blur(12px)}
+#hb5-cosmos{position:fixed;inset:0;z-index:10001;display:none;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 40%,rgba(73,60,145,.22),rgba(2,4,13,.96) 65%);backdrop-filter:blur(12px);transform:translateZ(0)}
 #hb5-cosmos.open{display:flex;animation:hb5fade .35s ease}
 .hb5-shell{width:min(1040px,94vw);max-height:90vh;overflow:auto;border:1px solid var(--line);border-radius:24px;background:linear-gradient(145deg,rgba(13,18,42,.96),rgba(4,7,18,.94));box-shadow:0 30px 100px rgba(0,0,0,.65),0 0 80px rgba(102,90,220,.12);position:relative;color:#e8edff}
 .hb5-shell:before{content:"";position:absolute;inset:0;background-image:radial-gradient(circle,rgba(220,230,255,.65) 1px,transparent 1.5px);background-size:83px 83px;opacity:.12;animation:hb5drift 35s linear infinite;pointer-events:none}
@@ -17311,16 +17395,54 @@ const QUESTS=[
  [['q4a','A Voice Between Notes','Choir of Dead Stars','Reach a 5-card Resonance chain three times.','The First Voice','Gain the Black Baton.'],['q4b','Silence the Choir','Choir of Dead Stars','Defeat an elite after deliberately breaking a chain.','The Conductor’s Shadow','Gain a rare relic.']],
  [['q5a','The Map Is Lying','Place Outside the Map','Visit three different node types in one Act V route.','The Unwritten Cartographer','Reveal the final route.'],['q5b','Something Was Waiting','Place Outside the Map','Defeat the final Guardian after surviving its Reality Fracture phase.','The Thing That Was Waiting','Unlock the true ending.']]
 ];
-let qstate=JSON.parse(localStorage.getItem('hb5quests')||'{}');let boss=null;
-function save(){localStorage.setItem('hb5quests',JSON.stringify(qstate))}
+let qstate={};try{qstate=JSON.parse(localStorage.getItem('hb5quests')||'{}');}catch(e){}let boss=null;
+function save(){try{localStorage.setItem('hb5quests',JSON.stringify(qstate));}catch(e){}}
 function ensureQuest(id){if(!qstate[id])qstate[id]={progress:0,done:false};return qstate[id]}
-function progressQuest(id,n=1){let q=QUESTS.flat().find(x=>x[0]===id);if(!q)return;let s=ensureQuest(id);s.progress=Math.min(99,(s.progress||0)+n);save()}
+function progressQuest(id,n=1){let q=QUESTS.flat().find(x=>x[0]===id);if(!q)return;let s=ensureQuest(id);s.progress=Math.min(3,(s.progress||0)+n);save()}
 function open(html){let root=document.getElementById('hb5-cosmos');document.getElementById('hb5-content').innerHTML=html;root.classList.add('open');root.setAttribute('aria-hidden','false')}
 function close(){let root=document.getElementById('hb5-cosmos');root.classList.remove('open');root.setAttribute('aria-hidden','true');boss=null}
 function currentAct(){return Math.min(4,(window.HB4State&&HB4State.act)||0)}
-function questBoard(){let a=currentAct(), data=ACTDATA[a], qs=QUESTS[a];open(`<button class="hb5-close" onclick="HB5.close()">✕</button><div class="hb5-kicker">THE HOLLOW BETWEEN · STORY CODEX</div><div class="hb5-title">${data.name}</div><div class="hb5-sub">${data.story}</div><div class="hb5-rule"><b>ACT LAW · ${data.rule.toUpperCase()}</b><span>${data.law}</span></div><div class="hb5-kicker" style="margin:20px 0 10px">SIDE QUESTS · ${a+1}/5</div><div class="hb5-grid">${qs.map(q=>{let s=ensureQuest(q[0]);return `<div class="hb5-card hb5-quest ${s.done?'done':''}"><span class="hb5-tag">${s.done?'COMPLETED':'SIDE QUEST'}</span><h3>${q[1]}</h3><p><b>Objective:</b> ${q[3]}</p><p style="margin-top:6px"><b>Thread:</b> ${q[4]}</p><div class="hb5-actions"><button class="hb5-btn" onclick="HB5.advance('${q[0]}')">SIMULATE PROGRESS</button>${s.done?'':'<button class="hb5-btn" onclick="HB5.claim(\''+q[0]+'\')">CLAIM</button>'}</div><small style="display:block;margin-top:9px;color:#7681a8">Progress ${s.progress||0}/3 · Reward: ${q[5]}</small></div>`}).join('')}</div><div class="hb5-actions"><button class="hb5-btn" onclick="HB5.boss()">★ FACE THE GUARDIAN</button><button class="hb5-btn" onclick="HB5.close()">RETURN</button></div>`)}
+function questBoard(){let a=currentAct(), data=ACTDATA[a], qs=QUESTS[a];
+ // BUGFIX: FACE THE GUARDIAN only works while S.mode==='field' (the fight
+ // is staged on the live expedition map). Tapping it from the ship/base
+ // screen used to look broken - the button was fully clickable but just
+ // fired a toast that's easy to miss on mobile, so nothing appeared to
+ // happen. Grey it out and say why up front instead of letting it fail
+ // silently after the tap.
+ let inField=!!(window.S&&S.mode==='field');
+ let guardianBtn=inField
+  ?'<button class="hb5-btn" onclick="HB5.boss()">★ FACE THE GUARDIAN</button>'
+  :'<button class="hb5-btn" disabled style="opacity:.45;cursor:not-allowed" title="Launch an expedition first">★ FACE THE GUARDIAN</button><small style="display:block;margin-top:6px;color:#7681a8">Launch an expedition to face the Guardian out in the field.</small>';
+ // BUGFIX: the CLAIM button used to disappear entirely once a quest was
+ // marked done, since it was only rendered at all when `!s.done`. That
+ // matches how "done" state should stop letting you claim again, but a
+ // button vanishing gives no confirmation the claim actually happened -
+ // it looks identical to nothing occurring. Keep it visible, just
+ // disabled and relabeled, so the claimed state is visibly permanent
+ // instead of silently absent.
+ open(`<button class="hb5-close" onclick="HB5.close()">✕</button><div class="hb5-kicker">THE HOLLOW BETWEEN · STORY CODEX</div><div class="hb5-title">${data.name}</div><div class="hb5-sub">${data.story}</div><div class="hb5-rule"><b>ACT LAW · ${data.rule.toUpperCase()}</b><span>${data.law}</span></div><div class="hb5-kicker" style="margin:20px 0 10px">SIDE QUESTS · ${a+1}/5</div><div class="hb5-grid">${qs.map(q=>{let s=ensureQuest(q[0]);return `<div class="hb5-card hb5-quest ${s.done?'done':''}"><span class="hb5-tag">${s.done?'COMPLETED':'SIDE QUEST'}</span><h3>${q[1]}</h3><p><b>Objective:</b> ${q[3]}</p><p style="margin-top:6px"><b>Thread:</b> ${q[4]}</p><div class="hb5-actions"><button class="hb5-btn" ${s.done?'disabled style="opacity:.45;cursor:not-allowed"':''} onclick="HB5.advance('${q[0]}')">SIMULATE PROGRESS</button><button class="hb5-btn" ${s.done?'disabled style="opacity:.6;cursor:not-allowed"':''} onclick="HB5.claim('${q[0]}')">${s.done?'✓ CLAIMED':'CLAIM'}</button></div><small style="display:block;margin-top:9px;color:#7681a8">Progress ${Math.min(s.progress||0,3)}/3 · Reward: ${q[5]}</small></div>`}).join('')}</div><div class="hb5-actions">${guardianBtn}<button class="hb5-btn" onclick="HB5.close()">RETURN</button></div>`)}
 function advance(id){progressQuest(id,1);questBoard()}
-function claim(id){let s=ensureQuest(id);if(s.progress<3||s.done)return; s.done=true;save(); if(window.S){S.gold=(S.gold||0)+10;S.resources=S.resources||{};S.resources.essence=(S.resources.essence||0)+2;} questBoard()}
+function claim(id){let s=ensureQuest(id);if(s.done)return;
+ // BUGFIX: this silently returned with no feedback when progress was
+ // below 3 - since the CLAIM button was always shown regardless of
+ // progress, tapping it before finishing the objective looked identical
+ // to a successful claim (button stayed, nothing happened, no message).
+ // Tell the player why nothing was granted instead of leaving it silent.
+ if(s.progress<3){if(typeof toast==='function')toast('Not finished yet - '+s.progress+'/3.','bad');return}
+ s.done=true;save();
+ // BUGFIX: every quest granted the exact same flat +10 gold/+2 essence
+ // no matter what its "Reward:" line promised ("Reveal a hidden route",
+ // "Gain the Black Baton", "Unlock the true ending", etc). The CLAIM
+ // button would vanish (correctly, since s.done is now true) but nothing
+ // matching that description ever appeared, and there was no confirmation
+ // of what was actually received - so claiming looked like it just made
+ // the button disappear for nothing. Scale the reward by act so later
+ // quests feel more meaningful, and always confirm what was granted.
+ let act=currentAct(),q=QUESTS[act].find(x=>x[0]===id),rewardLabel=q?q[5]:'a reward';
+ let goldGain=10+act*5,essenceGain=2+act;
+ if(window.S){S.gold=(S.gold||0)+goldGain;S.resources=S.resources||{};S.resources.essence=(S.resources.essence||0)+essenceGain;}
+ if(typeof toast==='function')toast('Claimed: '+rewardLabel+' (+'+goldGain+' gold, +'+essenceGain+' essence)','good');
+ questBoard()}
 function bossOpen(){let a=currentAct(),d=ACTDATA[a];boss={act:a,hp:100,phase:0,guard:0,turn:0};renderBoss()}
 function bossAct(action){if(!boss)return;let d=ACTDATA[boss.act];boss.turn++;let dmg=0,msg='';if(action==='strike'){dmg=18+Math.floor(Math.random()*10);msg='You strike through the cosmic shell.';boss.guard=0}else if(action==='card'){dmg=24+Math.floor(Math.random()*14);msg='Your deck becomes a weapon. Resonance detonates.';boss.guard=0}else{boss.guard=1;msg='You brace as the arena folds around you.'}
 boss.hp=Math.max(0,boss.hp-dmg);if(boss.hp<=66&&boss.phase<1)boss.phase=1;if(boss.hp<=33&&boss.phase<2)boss.phase=2;if(boss.hp<=0){victory();return}if(!boss.guard){let hit=7+Math.floor(Math.random()*10)+(boss.phase*3);if(action==='dodge')hit=Math.max(0,Math.floor(hit*.25));msg+=` The Guardian answers for ${hit} damage.`}else msg+=' The attack glances from your guard.';document.getElementById('hb5-log').textContent=msg;renderBoss()}
@@ -17328,7 +17450,7 @@ function renderBoss(){let d=ACTDATA[boss.act],phase=d.phases[boss.phase];open(`<
 function victory(){let d=ACTDATA[boss.act];if(window.S){S.gold=(S.gold||0)+30;S.resources=S.resources||{};S.resources.essence=(S.resources.essence||0)+5;}for(let q of QUESTS[boss.act]){let s=ensureQuest(q[0]);if(boss.act===4&&q[0]==='q5b'){s.progress=3;s.done=true}}save();open(`<div class="hb5-kicker">GUARDIAN FALLEN</div><div class="hb5-title">${d.boss}</div><div class="hb5-sub">The arena goes quiet. Something beyond the Guardian has opened its eye.</div><div class="hb5-reward"><span class="hb5-tag">ACT RELIC</span><h3>${d.reward}</h3><p>The Guardian leaves behind a relic shaped by the law of ${d.rule}.</p></div><div class="hb5-actions"><button class="hb5-btn" onclick="HB5.advanceAct()">DESCEND TO THE NEXT ACT</button></div>`)}
 function advanceAct(){if(window.HB4State){if(HB4State.act<4){HB4State.act++;HB4State.room=0;HB4State.visited=[];if(window.HB4&&HB4.open)HB4.open();}else{localStorage.setItem('hb5_trueEnding','1');open(`<div class="hb5-kicker">THE FINAL DESCENT</div><div class="hb5-title">The Place Outside the Map</div><div class="hb5-sub">The map ends. The story does not.</div><div class="hb5-rule"><b>TRUE ENDING</b><span>You have reached the place that was waiting for you.</span></div><div class="hb5-actions"><button class="hb5-btn" onclick="HB5.close()">RETURN TO THE HOLLOW</button></div>`)}}}
 window.HB5={open:questBoard,close,advance,claim,act:bossAct,boss:bossOpen,advanceAct};
-window.addEventListener('load',()=>{setTimeout(()=>{let b=document.createElement('button');b.id='hb5-open';b.textContent='✧ STORY / QUESTS';b.style.cssText='position:fixed;right:18px;top:124px;z-index:9997;border:1px solid rgba(151,177,255,.3);background:rgba(8,12,28,.9);color:#d9e1ff;border-radius:10px;padding:9px 12px;font:11px system-ui;letter-spacing:.1em;cursor:pointer;backdrop-filter:blur(8px)';b.onclick=questBoard;document.body.appendChild(b);if(window.HB4)HB4.chooseBoss=()=>HB5.boss();if(typeof dockTitleUtilities==='function')dockTitleUtilities();},1200)})
+window.addEventListener('load',()=>{setTimeout(()=>{let b=document.createElement('button');b.id='hb5-open';b.textContent='✧ STORY / QUESTS';b.style.cssText='position:fixed;right:18px;top:173px;z-index:9997;border:1px solid rgba(151,177,255,.3);background:rgba(8,12,28,.9);color:#d9e1ff;border-radius:10px;padding:9px 12px;font:11px system-ui;letter-spacing:.1em;cursor:pointer;backdrop-filter:blur(8px)';b.onclick=questBoard;document.body.appendChild(b);if(window.HB4)HB4.chooseBoss=()=>HB5.boss();if(typeof dockTitleUtilities==='function')dockTitleUtilities();},1200)})
 })();
 </script>
 
@@ -17394,8 +17516,31 @@ function spawnAttack(){if(!active||!active.creature||active.creature.hp<=0)retur
 function tickBoss(c,dt){if(!active||!c||c.hp<=0)return;active.creature=c;let phase=c.hp<=c.maxhp*.33?2:c.hp<=c.maxhp*.66?1:0;if(phase!==active.phase){active.phase=phase;cinematic(DATA[active.act].phases[phase]);say(DATA[active.act].tip[phase]);for(let i=0;i<8;i++)spawnParticle(c.x,c.y,DATA[active.act].color,10)}active.timer-=dt;if(active.timer<=0){active.timer=Math.max(.95,1.65-phase*.18);spawnAttack()}
  zones.forEach(z=>{z.life-=dt;if(z.expand)z.r+=z.expand*dt;if(z.pull&&z.delay<=0){let dx=c.x-S.px,dy=c.y-S.py,d=Math.hypot(dx,dy)||1;if(d<z.r){S.px+=dx/d*18*dt;S.py+=dy/d*18*dt}}if(z.delay>0)z.delay-=dt;else damageZone(z)});zones=zones.filter(z=>z.life>0);setUI()}
 function drawZones(){if(!active||!ctx||!canvas)return;ctx.save();let camX=cam.x,camY=cam.y;ctx.translate(canvas.width/2-camX,canvas.height/2-camY);zones.forEach(z=>{let alpha=z.delay>0?.32:.62;ctx.save();ctx.globalAlpha=alpha;ctx.strokeStyle=z.color||'#b88aff';ctx.fillStyle=z.color||'#b88aff';ctx.lineWidth=2/TILE*16;ctx.setLineDash(z.delay>0?[7,7]:[]);if(z.kind==='circle'||z.kind==='slam'||z.kind==='bloom'||z.kind==='rift'||z.kind==='pulse'){ctx.beginPath();ctx.arc(z.x,z.y,z.r,0,Math.PI*2);ctx.stroke();if(z.delay<=0){ctx.globalAlpha=.08;ctx.fill()}}else if(z.kind==='ring'){ctx.beginPath();ctx.arc(z.x,z.y,z.r,0,Math.PI*2);ctx.stroke();}else{ctx.beginPath();ctx.moveTo(z.x1,z.y1);ctx.lineTo(z.x2,z.y2);ctx.lineWidth=z.width*2;ctx.stroke()}ctx.restore()});ctx.restore()}
-function actualStart(){if(!window.S)return;let act=Math.max(0,Math.min(4,(window.HB4State&&HB4State.act)||0)),d=DATA[act];S.mode='field';S._hbBossFight=true;S._hbBossAct=act;S._hbBossZones=zones=[];S.creatures=(S.creatures||[]).filter(c=>c.isFragment||c.isGravityWell||c.isRift||c.isSporeObject||c.isEchoDecoy||c.isRootTrap);let cx=(S.px||((S.fieldW||96)*TILE/2)),cy=(S.py||((S.fieldH||64)*TILE/2));S.px=cx;S.py=cy;let id=['mirestalker','convergent','resonant_warden','convergent','convergent'][act];let c=spawnCreatureAt(id,cx+72,cy);if(!c){return}c.maxhp=act===4?170:act===1?145:act===3?125:115;c.hp=c.maxhp;c.isBoss=true;c._hbBoss=true;c.bossAct=act;c.bossColor=d.color;c.size=26;c.x=cx+72;c.y=cy;active={act,creature:c,phase:0,timer:1.2,hits:0,maxhp:c.maxhp};hideUI();showUI();document.getElementById('hb6-victory').style.display='none';cinematic(d.name+' · Guardian encounter');say(d.tip[0]);
+function actualStart(){if(!window.S)return;
+ // BUGFIX: this used to blindly force S.mode='field' and spawn the boss
+ // at S.px/S.py, whatever those happened to be. If the player opened
+ // "Face the Guardian" from the ship/base screen (the Story/Quests button
+ // is reachable from there), there was no field map, no camera, and no
+ // rendered terrain underneath the boss HUD it pasted on screen - the HP
+ // bar and phase text would appear, but there was nowhere for the player
+ // to actually see or stand, so the fight looked like it did nothing.
+ // This arena system reuses the game's existing field/camera/render loop
+ // rather than building its own, so it genuinely needs an expedition
+ // already underway. Require that up front with a clear explanation
+ // instead of leaving the player staring at a HUD glued onto a blank or
+ // wrong screen.
+ if(S.mode!=='field'){toast('Launch an expedition first - the Guardian can only be faced out in the field.','bad');return}
+ let act=Math.max(0,Math.min(4,(window.HB4State&&HB4State.act)||0)),d=DATA[act];S.mode='field';S._hbBossFight=true;S._hbBossAct=act;S._hbBossZones=zones=[];S.creatures=(S.creatures||[]).filter(c=>c.isFragment||c.isGravityWell||c.isRift||c.isSporeObject||c.isEchoDecoy||c.isRootTrap);let cx=(S.px||((S.fieldW||96)*TILE/2)),cy=(S.py||((S.fieldH||64)*TILE/2));S.px=cx;S.py=cy;let id=['mirestalker','convergent','resonant_warden','convergent','convergent'][act];let c=spawnCreatureAt(id,cx+72,cy);if(!c){return}c.maxhp=act===4?170:act===1?145:act===3?125:115;c.hp=c.maxhp;c.isBoss=true;c._hbBoss=true;c.bossAct=act;c.bossColor=d.color;c.size=26;c.x=cx+72;c.y=cy;active={act,creature:c,phase:0,timer:1.2,hits:0,maxhp:c.maxhp};hideUI();showUI();document.getElementById('hb6-victory').style.display='none';cinematic(d.name+' · Guardian encounter');say(d.tip[0]);
  if(typeof closeModal==='function')closeModal();
+ // BUGFIX: closeModal() above only closes the generic app modal, but the
+ // Story/Quests panel the player clicked "Face the Guardian" from is a
+ // separate overlay (#hb5-cosmos) that was never told to close. The fight
+ // was actually starting correctly underneath it, but the quest panel kept
+ // covering the whole screen, so clicking the button looked like it did
+ // nothing. Close it directly here (not via HB5.close(), which also tears
+ // the arena back down - we just want the panel gone, not the fight).
+ let hb5cosmos=document.getElementById('hb5-cosmos');
+ if(hb5cosmos){hb5cosmos.classList.remove('open');hb5cosmos.setAttribute('aria-hidden','true')}
 }
 function victory(c){if(!active)return;let act=active.act,d=DATA[act];if(window.S){S._hbBossFight=false;S._hbBossZones=[];S.gold=(S.gold||0)+40+act*10;S.resources=S.resources||{};S.resources.essence=(S.resources.essence||0)+8+act*2;S.score=(S.score||0)+1000*(act+1)}if(window.progressQuest){if(act===4)progressQuest('q5b',3);else{let q=QUESTS&&QUESTS[act]&&QUESTS[act][0];if(q)progressQuest(q[0],3)}}if(typeof save==='function')save();hideUI();active=null;zones=[];let v=document.getElementById('hb6-victory');document.getElementById('hb6-victory-card').innerHTML='<div class="eyebrow">GUARDIAN FALLEN · ACT '+(act+1)+'</div><h2>'+d.name+'</h2><p>The arena releases its breath. <b>'+d.phases[2]+'</b> has passed into memory.</p><p style="color:#e7c878">REWARD · '+(act===0?'Tidal Lens':act===1?'Colossus Heart':act===2?'Living Seed Crown':act===3?'Black Baton':'Unwritten Key')+'</p><button class="hb6-btn" id="hb6-continue">DESCEND TO ACT '+(act+2)+'</button>';v.style.display='grid';if(act===4)document.getElementById('hb6-continue').textContent='ENTER THE PLACE OUTSIDE THE MAP';document.getElementById('hb6-continue').onclick=()=>continueAct(act)}
 function continueAct(act){document.getElementById('hb6-victory').style.display='none';if(act<4&&window.HB4State){HB4State.act=act+1;HB4State.room=0;HB4State.visited=[];HB4State.map=[];for(let r=0;r<12;r++){let count=r===0||r===11?1:(r%3===0?3:2),row=[];for(let i=0;i<count;i++){let rr=Math.random();let t=r===0?'combat':r===11?'boss':r%3===0?(rr<.5?'elite':'event'):(rr<.28?'relic':rr<.45?'event':'combat');row.push({r,i,type:t,id:r+'-'+i})}HB4State.map.push(row)}if(window.HB4)HB4.open();}else if(act===4){localStorage.setItem('hb5_trueEnding','1');let v=document.getElementById('hb6-victory');v.style.display='grid';document.getElementById('hb6-victory-card').innerHTML='<div class="eyebrow">THE MAP ENDS</div><h2>THE PLACE OUTSIDE THE MAP</h2><p>There is no Guardian left to defeat. Only the question that the Hollow has been asking since the first step.</p><button class="hb6-btn" onclick="document.getElementById(\'hb6-victory\').style.display=\'none\'">RETURN TO THE HOLLOW</button>';}}
@@ -17422,7 +17567,7 @@ function install(){if(!rafInstalled){oldAI=window.updateCreatureAI;window.update
    }
  }
 }
-window.HB6={start:actualStart,victory,continueAct};
+window.HB6={start:actualStart,victory,continueAct,isActive:()=>!!active};
 window.addEventListener('load',()=>setTimeout(install,1400));setTimeout(install,400);
 })();
 </script>
@@ -17731,7 +17876,17 @@ window.addEventListener('load',()=>setTimeout(install,1400));setTimeout(install,
 .hb10-meter{height:6px;background:#111a21;border-radius:10px;overflow:hidden;margin-top:6px}.hb10-meter i{display:block;height:100%;background:linear-gradient(90deg,#54d9ff,#b88aff);width:var(--w,50%)}
 #hb10-toast{position:fixed;left:50%;bottom:16%;transform:translateX(-50%) translateY(20px);opacity:0;transition:.25s;z-index:10010;padding:10px 15px;border:1px solid rgba(184,138,255,.38);background:rgba(6,10,15,.92);border-radius:12px;box-shadow:0 12px 45px rgba(0,0,0,.5);color:#e9f4f6;font-size:12px;pointer-events:none}.hb10-toast.on{opacity:1;transform:translateX(-50%)}
 .hb10-choice{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.hb10-choice .hb10-card{cursor:pointer;min-height:155px}.hb10-price{color:#f0c56e;font-weight:800}.hb10-muted{color:#718590;font-size:10px}.hb10-titleline{display:flex;justify-content:space-between;gap:10px;align-items:center}.hb10-dot{width:8px;height:8px;border-radius:50%;display:inline-block;background:#b88aff;box-shadow:0 0 10px #b88aff;margin-right:5px}
-@media(max-width:800px){#hb10-panel{inset:3% 2%}.hb10-grid,.hb10-choice{grid-template-columns:1fr}.hb10-content{padding:14px}.hb10-head{padding:14px 16px}#hb10-toolbar{top:auto;bottom:10px;right:10px}.hb10-btn{padding:8px}}
+@media(max-width:800px){#hb10-panel{inset:3% 2%}.hb10-grid,.hb10-choice{grid-template-columns:1fr}.hb10-content{padding:14px}.hb10-head{padding:14px 16px}
+/* BUGFIX: this toolbar (Codex/Quartermaster/Forge/Factions/Ascension)
+   used to reposition itself to bottom:10px;right:10px on narrow
+   viewports, landing on top of the #hb35-mobile-actions Attack/Dodge/
+   Ability buttons. Moving it to the top instead just made it overlap
+   the main expedition panel below it - there simply isn't a free
+   corner for a 5-button stack on a phone screen. It's reachable from
+   the ☰ menu's new "Codex" entry instead (see sidenav), so hide the
+   floating version entirely below desktop widths rather than keep
+   chasing a non-overlapping position that doesn't exist. */
+#hb10-toolbar{display:none}}
 </style>
 <div id="hb10-root"><div id="hb10-ambient"></div><div id="hb10-vignette"></div></div>
 <div id="hb10-toolbar" class="hb-ingame-floater"><button class="hb10-btn" onclick="HB10.open('codex')">Codex</button><button class="hb10-btn" onclick="HB10.open('shop')">Quartermaster</button><button class="hb10-btn" onclick="HB10.open('forge')">Forge</button><button class="hb10-btn" onclick="HB10.open('factions')">Factions</button><button class="hb10-btn" onclick="HB10.open('meta')">Ascension</button></div>
@@ -17975,7 +18130,7 @@ H.render=render;window.addEventListener('keydown',e=>{if(e.key.toLowerCase()==='
 .hb10-card:before{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(120deg,rgba(255,255,255,.035),transparent 35%);opacity:.55}
 .hb10-card h3,.hb10-card p,.hb10-card .hb10-stat,.hb10-card .hb10-actions{position:relative;z-index:1}
 .hb10-action:disabled,.hb10-btn:disabled{opacity:.4;cursor:not-allowed}.hb10-action{transition:transform .12s ease,border-color .12s ease,box-shadow .12s ease}.hb10-action:not(:disabled):active{transform:translateY(1px)}
-@media(max-width:600px){#hb10-toolbar{display:grid;grid-template-columns:repeat(2,1fr);width:170px}.hb10-btn{font-size:9px}.hb10-head h2{font-size:19px}}
+@media(max-width:600px){#hb10-toolbar{display:none}.hb10-btn{font-size:9px}.hb10-head h2{font-size:19px}}
 </style>
 <script id="hb11-polish-script">
 (()=>{
@@ -19857,7 +20012,7 @@ setTimeout(reconcile,500);setInterval(()=>{try{reconcile()}catch(e){console.warn
 :root{--hb22-glass:rgba(10,14,21,.88);--hb22-line:rgba(190,205,225,.16);--hb22-glow:rgba(154,125,255,.22)}
 .hb22-launch{position:fixed;right:18px;bottom:18px;z-index:9700;padding:11px 14px;border:1px solid rgba(190,170,255,.45);border-radius:12px;background:linear-gradient(135deg,rgba(24,20,38,.96),rgba(10,16,25,.96));color:#eee;box-shadow:0 12px 40px rgba(0,0,0,.45),0 0 24px var(--hb22-glow);font:600 10px var(--font-mono);letter-spacing:.12em;text-transform:uppercase;cursor:pointer;backdrop-filter:blur(10px)}
 .hb22-launch:hover{transform:translateY(-2px);border-color:rgba(220,205,255,.8)}
-.hb22-modal{position:fixed;inset:0;z-index:9750;background:radial-gradient(circle at 50% 0%,rgba(76,55,120,.16),rgba(2,4,8,.9) 55%);display:none;align-items:center;justify-content:center;padding:18px;backdrop-filter:blur(5px)}
+.hb22-modal{position:fixed;inset:0;z-index:9750;background:radial-gradient(circle at 50% 0%,rgba(76,55,120,.16),rgba(2,4,8,.9) 55%);display:none;align-items:center;justify-content:center;padding:18px;backdrop-filter:blur(5px);transform:translateZ(0)}
 .hb22-shell{width:min(980px,96vw);max-height:90vh;overflow:hidden;border:1px solid var(--hb22-line);border-radius:18px;background:linear-gradient(145deg,rgba(16,21,30,.98),rgba(7,10,16,.98));box-shadow:0 30px 100px rgba(0,0,0,.7),0 0 70px rgba(121,90,220,.12);color:#e6e9ef;font:13px var(--font-body)}
 .hb22-top{display:flex;justify-content:space-between;align-items:center;padding:18px 20px;border-bottom:1px solid var(--hb22-line);background:linear-gradient(90deg,rgba(255,255,255,.025),transparent)}
 .hb22-kicker{font:600 9px var(--font-mono);letter-spacing:.18em;color:#a895d8;text-transform:uppercase}.hb22-title{font:700 25px var(--font-display);letter-spacing:.04em;margin-top:3px}.hb22-close{border:0;background:transparent;color:#9ba3af;font-size:22px;cursor:pointer}
@@ -20322,11 +20477,13 @@ window.addEventListener('resize',installAmbient,{passive:true});
 #hb35-mobile-actions button{pointer-events:auto;width:62px;height:62px;border-radius:50%;border:1px solid rgba(236,205,133,.45);background:rgba(8,12,16,.82);color:var(--c-ivory);font:700 12px/1 var(--font-mono);box-shadow:0 5px 20px rgba(0,0,0,.35);touch-action:manipulation}
 #hb35-mobile-actions button:active{transform:scale(.94);background:rgba(127,212,238,.18)}
 #hb35-mobile-actions .dodge{border-color:rgba(127,212,238,.45)}
+#hb35-mobile-actions .ability{border-color:rgba(184,138,255,.5)}
 body.touch:not(.pregame) #hb35-mobile-actions{display:flex}
 @media (max-width:420px){#hb35-mobile-actions{right:max(10px,env(safe-area-inset-right));bottom:max(10px,env(safe-area-inset-bottom));gap:7px}#hb35-mobile-actions button{width:56px;height:56px}}
 button:focus-visible,.btn:focus-visible,.navbtn:focus-visible,.opt:focus-visible{outline:2px solid var(--c-cyan);outline-offset:2px}
 </style>
 <div id="hb35-mobile-actions" aria-label="Mobile combat controls">
+  <button id="hb35Ability" class="ability" type="button" aria-label="Companion ability">ABILITY</button>
   <button id="hb35Attack" type="button" aria-label="Attack">ATTACK</button>
   <button id="hb35Dodge" class="dodge" type="button" aria-label="Dodge">DODGE</button>
 </div>
@@ -20335,10 +20492,26 @@ button:focus-visible,.btn:focus-visible,.navbtn:focus-visible,.opt:focus-visible
   'use strict';
   function q(id){return document.getElementById(id)}
   function mobileAction(fn){return function(e){e.preventDefault();e.stopPropagation();try{if(window.S&&S.mode==='field'&&typeof window[fn]==='function')window[fn]();}catch(err){if(window.toast)toast('That action is unavailable right now.','muted')}}}
+  function dodgeAction(e){e.preventDefault();e.stopPropagation();try{if(window.S&&S.mode==='field'&&S.dodgeCd<=0){S.dodgeTimer=.4;S.dodgeCd=1.2;if(window.SFX&&SFX.beep)SFX.beep(220,.15,'square')}}catch(err){}}
   function setup(){
-    const a=q('hb35Attack'),d=q('hb35Dodge');
-    if(a) a.addEventListener('pointerdown',mobileAction('tryAttack'));
-    if(d) d.addEventListener('pointerdown',function(e){e.preventDefault();e.stopPropagation();try{if(window.S&&S.mode==='field'&&S.dodgeCd<=0){S.dodgeTimer=.4;S.dodgeCd=1.2;if(window.SFX&&SFX.beep)SFX.beep(220,.15,'square')}}catch(err){}});
+    const a=q('hb35Attack'),d=q('hb35Dodge'),ab=q('hb35Ability');
+    // BUGFIX: these only listened for 'pointerdown', so the buttons never
+    // responded to a plain 'click' (e.g. a mouse click, a keyboard-activated
+    // button press, or any test/automation harness that dispatches a
+    // synthetic click rather than a real pointer/touch sequence - which is
+    // also why this looked identical to the "nothing happens" Guardian bug
+    // above). tryAttack()'s own attackCooldown gate already prevents a
+    // double-fire on devices where both events land for the same tap, so
+    // it's safe to listen for both.
+    if(a){a.addEventListener('pointerdown',mobileAction('tryAttack'));a.addEventListener('click',mobileAction('tryAttack'))}
+    if(d){d.addEventListener('pointerdown',dodgeAction);d.addEventListener('click',dodgeAction)}
+    // BUGFIX: initPhoneControls() hides the whole original #touchpad button
+    // row (including #tbtnAbility, the only thing wired to useCompanion())
+    // on every touch device, and nothing ever replaced it here alongside
+    // ATTACK/DODGE - so calling your companion's ability (keyboard "Q")
+    // was completely unreachable on phones. Give it the same button
+    // treatment as the other two mobile actions.
+    if(ab){ab.addEventListener('pointerdown',mobileAction('useCompanion'));ab.addEventListener('click',mobileAction('useCompanion'))}
     if(window.IS_TOUCH_DEVICE||('ontouchstart' in window)||navigator.maxTouchPoints>0) document.body.classList.add('touch');
   }
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',setup);else setup();
@@ -20359,7 +20532,6 @@ button:focus-visible,.btn:focus-visible,.navbtn:focus-visible,.opt:focus-visible
 })();
 </script>
 
-</body></html>
 <script>
 /* ============================================================
    v23  -  MOMENT-TO-MOMENT COMBAT / EXPEDITION DEPTH PASS
@@ -20599,13 +20771,17 @@ function resolveConflict(id){const s=root();const x=m(id);if(!s.hb28.conflicts.i
 function personal(id){const s=root();s.hb28.personal[id]=s.hb28.personal[id]||{progress:0,complete:false};const p=s.hb28.personal[id];p.progress=Math.min(3,p.progress+1);if(p.progress>=3&&!p.complete){p.complete=true;delta(id,12,10,-10,12);log(D[id].name+' completed personal quest: '+D[id].personal+'.')}else log(D[id].name+' personal quest advanced: '+D[id].personal+'.');render()}
 function leave(id){const s=root();const x=m(id);if(x.loyalty< -20||x.tension>=95){s.hb28.departed[id]={day:s.day||1,reason:'party conflict'};log(D[id].name+' left the expedition party.');}render()}
 function tactical(id){const s=root();s.hb28.abilities['active_'+id]=true;log(D[id].name+' used '+D[id].ability+'. Their combat kit is now primed.');try{toast(D[id].ability+' primed','gold')}catch(e){}render()}
-function render(){const s=root();if(!s)return;let cards='';for(const [id,d] of Object.entries(D)){const x=m(id),p=s.hb28.personal[id]||{progress:0,complete:false},departed=s.hb28.departed[id];cards+='<div class="hb28-card"><h3>'+d.name+' · '+d.role+'</h3><div class="hb28-muted">Fear: '+d.fear+' · Rival: '+D[d.rival].name+'</div><p><span class="hb28-pill">Bond '+x.bond+'</span><span class="hb28-pill">Respect '+x.respect+'</span><span class="hb28-pill">Tension '+x.tension+'</span><span class="hb28-pill">Loyalty '+x.loyalty+'</span></p><div class="hb28-meter"><i style="--w:'+Math.max(0,x.loyalty+50)+'%"></i></div><p class="hb28-muted">Personal quest: '+d.personal+' · '+p.progress+'/3 '+(p.complete?'✓':'')+'</p><button class="hb28-btn" onclick="HB28.choice(\''+id+'\',\'protect\')">Protect</button><button class="hb28-btn" onclick="HB28.choice(\''+id+'\',\'study\')">Study</button><button class="hb28-btn" onclick="HB28.choice(\''+id+'\',\'harvest\')">Harvest</button><button class="hb28-btn" onclick="HB28.personal(\''+id+'\')">Advance personal quest</button><button class="hb28-btn" onclick="HB28.tactical(\''+id+'\')">Prime ability</button>'+(s.hb28.conflicts.includes(id)?'<button class="hb28-btn" onclick="HB28.resolve(\''+id+'\')">Resolve confrontation</button>':'')+(departed?'<p class="hb28-muted">Departed on day '+departed.day+'</p>':'')+'</div>'}let logs=s.hb28.dialogue.slice(0,12).map(v=>'<div class="hb28-muted">Day '+v.day+' · '+v.text+'</div>').join('');let combos='';for(const a of Object.keys(D))for(const b of Object.keys(D))if(a<b)combos+='<button class="hb28-btn" onclick="HB28.combo(\''+a+'\',\''+b+'\')">Develop '+D[a].name+' + '+D[b].name+'</button>';let el=document.getElementById('hb28-root');if(el)el.innerHTML='<div class="hb28-overlay"><h2>PARTY DRAMA · V28</h2><p class="hb28-muted">Companions now remember choices, disagree, pursue personal goals, unlock tactical cooperation, and can reach breaking points.</p><div class="hb28-grid">'+cards+'</div><h3>Dual Abilities</h3>'+combos+'<h3>Party Memory</h3><div class="hb28-card">'+(logs||'No party memories yet.')+'</div></div>'}
-window.HB28={root,m,choice,combo,resolve:resolveConflict,personal,leave,tactical,render};
-document.addEventListener('DOMContentLoaded',()=>{let el=document.createElement('div');el.id='hb28-root';document.body.appendChild(el);if(window.S)render()});
-/* BUGFIX: this panel used to only ever render once, on page load, before a
-   run existed - so it stayed blank for the whole game. Refresh it whenever
-   a run is active so party drama actually shows up during play. */
-setInterval(()=>{if(window.S)render()},2000);
+function render(){const s=root();if(!s)return;let cards='';for(const [id,d] of Object.entries(D)){const x=m(id),p=s.hb28.personal[id]||{progress:0,complete:false},departed=s.hb28.departed[id];cards+='<div class="hb28-card"><h3>'+d.name+' · '+d.role+'</h3><div class="hb28-muted">Fear: '+d.fear+' · Rival: '+D[d.rival].name+'</div><p><span class="hb28-pill">Bond '+x.bond+'</span><span class="hb28-pill">Respect '+x.respect+'</span><span class="hb28-pill">Tension '+x.tension+'</span><span class="hb28-pill">Loyalty '+x.loyalty+'</span></p><div class="hb28-meter"><i style="--w:'+Math.max(0,x.loyalty+50)+'%"></i></div><p class="hb28-muted">Personal quest: '+d.personal+' · '+p.progress+'/3 '+(p.complete?'✓':'')+'</p><button class="hb28-btn" onclick="HB28.choice(\''+id+'\',\'protect\')">Protect</button><button class="hb28-btn" onclick="HB28.choice(\''+id+'\',\'study\')">Study</button><button class="hb28-btn" onclick="HB28.choice(\''+id+'\',\'harvest\')">Harvest</button><button class="hb28-btn" onclick="HB28.personal(\''+id+'\')">Advance personal quest</button><button class="hb28-btn" onclick="HB28.tactical(\''+id+'\')">Prime ability</button>'+(s.hb28.conflicts.includes(id)?'<button class="hb28-btn" onclick="HB28.resolve(\''+id+'\')">Resolve confrontation</button>':'')+(departed?'<p class="hb28-muted">Departed on day '+departed.day+'</p>':'')+'</div>'}let logs=s.hb28.dialogue.slice(0,12).map(v=>'<div class="hb28-muted">Day '+v.day+' · '+v.text+'</div>').join('');let combos='';for(const a of Object.keys(D))for(const b of Object.keys(D))if(a<b)combos+='<button class="hb28-btn" onclick="HB28.combo(\''+a+'\',\''+b+'\')">Develop '+D[a].name+' + '+D[b].name+'</button>';let el=document.getElementById('hb28-root');if(el)el.innerHTML='<div class="hb28-overlay"><button class="hb28-btn" style="float:right" onclick="HB28.close()">Close ×</button><h2>PARTY DRAMA · V28</h2><p class="hb28-muted">Companions now remember choices, disagree, pursue personal goals, unlock tactical cooperation, and can reach breaking points.</p><div class="hb28-grid">'+cards+'</div><h3>Dual Abilities</h3>'+combos+'<h3>Party Memory</h3><div class="hb28-card">'+(logs||'No party memories yet.')+'</div></div>'}
+function isOpen(){const el=document.getElementById('hb28-root');return !!(el&&el.innerHTML)}
+function open(){render()}
+function close(){const el=document.getElementById('hb28-root');if(el)el.innerHTML=''}
+window.HB28={root,m,choice,combo,resolve:resolveConflict,personal,leave,tactical,render,open,close};
+document.addEventListener('DOMContentLoaded',()=>{let el=document.createElement('div');el.id='hb28-root';document.body.appendChild(el)});
+/* Party Drama is a toggleable panel (press F6), not something that should
+   take over the screen on its own. While it's open, keep its contents fresh
+   every 2s; while closed, leave the screen alone. */
+setInterval(()=>{if(window.S&&isOpen())render()},2000);
+window.addEventListener('keydown',e=>{if(e.key==='F6'){e.preventDefault();isOpen()?close():open()}if(e.key==='Escape'&&isOpen())close()});
 })();
 </script>
 
@@ -20927,3 +21103,60 @@ if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',
 setTimeout(init,500);setTimeout(init,1500);
 })();
 </script>
+<script>
+(function(){
+  'use strict';
+  // Rotate-prompt dismiss: let a player keep playing in portrait if they
+  // want to; re-arm the prompt once they've actually rotated to landscape
+  // and then come back to portrait, rather than hiding it permanently.
+  function setup(){
+    var btn = document.getElementById('rotatePromptDismiss');
+    if(btn) btn.addEventListener('click', function(){
+      document.body.classList.add('rotate-dismissed');
+    });
+    var wasPortrait = window.matchMedia('(orientation:portrait)').matches;
+    window.addEventListener('resize', function(){
+      var isPortrait = window.matchMedia('(orientation:portrait)').matches;
+      if(wasPortrait && !isPortrait) document.body.classList.remove('rotate-dismissed');
+      wasPortrait = isPortrait;
+    }, {passive:true});
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', setup); else setup();
+})();
+</script>
+<script>
+(function(){
+  'use strict';
+  // Title screen hint text is authored for keyboard/mouse only. Swap it
+  // for the actual touch scheme (drag-anywhere to move, tap to interact,
+  // double-tap to attack, swipe up to dodge, and the on-screen
+  // ability/attack/dodge buttons) on touch devices.
+  function setup(){
+    var isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+    if(!isTouch) return;
+    var hint = document.getElementById('titleHint');
+    if(hint) hint.textContent = 'Drag anywhere to move · Tap to interact · Double-tap to attack · Swipe up to dodge · Use the on-screen buttons for ability/attack/dodge';
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded', setup); else setup();
+})();
+</script>
+<script>
+(function(){
+  'use strict';
+  // Chrome for Android (and most mobile browsers) create AudioContexts in
+  // a 'suspended' state until resumed inside a real user-gesture handler.
+  // SFX.init() above never called resume(), so sound effects were
+  // effectively silent on Android. Resume on the first touch/click.
+  function resumeAudio(){
+    try{
+      if(window.SFX && SFX.ctx && SFX.ctx.state === 'suspended'){
+        SFX.ctx.resume();
+      }
+    }catch(e){}
+  }
+  document.addEventListener('touchend', resumeAudio, {once:true, passive:true});
+  document.addEventListener('click', resumeAudio, {once:true});
+})();
+</script>
+</body>
+</html>
