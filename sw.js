@@ -68,16 +68,3 @@ self.addEventListener("fetch", (event) => {
     })
   );
 });
-// the network/browser cache, not this worker - fonts already degrade
-// gracefully via CSS fallback stacks if that request fails).
-self.addEventListener("fetch", (event) => {
-  const url = new URL(event.request.url);
-  if (url.origin !== self.location.origin) return; // let font/CDN requests pass through untouched
-
-  event.respondWith(
-    caches.match(event.request).then((cached) => {
-      if (cached) return cached;
-      return fetch(event.request).catch(() => cached);
-    })
-  );
-});
