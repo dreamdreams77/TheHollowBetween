@@ -1101,6 +1101,16 @@ function freshState(buildName){
 }
 
 function save(){
+  // BUGFIX: dozens of independently-added subsystems each call
+  // window.save() unconditionally from their own install()/init(),
+  // which run on DOMContentLoaded - before this core engine's own
+  // init() (which runs on window.load, later) has restored S from an
+  // existing save. With no guard here, save() would run in the
+  // meantime with S still unset, writing the literal string "null"
+  // over both the save and (via the backup-rotation two lines down)
+  // its backup too - silently destroying an existing save on every
+  // page load, before the player ever got a chance to see it again.
+  if(!S) return;
   try{
     const data=JSON.stringify(S);
     const previous=localStorage.getItem('hollow_between_save');
