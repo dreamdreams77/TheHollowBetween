@@ -5374,7 +5374,15 @@ function confirmNewGame(){
 window.confirmNewGame=confirmNewGame;
 
 function returnToTitle(){
+  // BUGFIX: this only ever removed the primary save key. load()'s backup
+  // recovery (see load(), a few lines up) falls back to
+  // hollow_between_save_backup whenever the primary is missing and
+  // re-promotes it to primary - so the very next page load after
+  // "Erase & Start Over" silently resurrected the "erased" character,
+  // breaking the confirmation dialog's "this cannot be undone" promise
+  // for anyone who reloaded before starting a new one. Clear both.
   try{ localStorage.removeItem('hollow_between_save'); }catch(e){}
+  try{ localStorage.removeItem('hollow_between_save_backup'); }catch(e){}
   closeModal();
   if(typeof closeSidenav==='function') closeSidenav();
   dismissTutorialStep();
