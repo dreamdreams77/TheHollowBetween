@@ -19899,14 +19899,36 @@ function applyMemoryToCreature(c){
  if(def&&mem.adaptations.includes(def.learn))c.adapted=true;
 }
 
+// applyMemoryToCreature() above sets learnedPlayer/respectful/fearful/adapted
+// on the creature and uses them to shift its speed, but nothing anywhere else
+// in the file ever reads those flags back out - so a species remembering the
+// player was a completely invisible mechanic, indistinguishable from a
+// stat-roll variance. Surface it once per species per expedition, the first
+// time it's meaningful, so a returning creature actually reads as a callback
+// instead of silently just moving faster or slower.
+let recognizedThisRun=new Set();
+function noteRecognition(c){
+ if(!c||!c.id||!c.hb21Memory)return;
+ if(!(c.learnedPlayer||c.respectful||c.fearful||c.adapted))return;
+ if(recognizedThisRun.has(c.id))return;
+ recognizedThisRun.add(c.id);
+ const name=(typeof SPECIES!=='undefined'&&SPECIES[c.id]&&SPECIES[c.id].name)||c.id;
+ let line,kind;
+ if(c.fearful){line='The '+name+' flinches back - it remembers you as a threat.';kind='bad'}
+ else if(c.respectful){line='The '+name+' hesitates, remembering your mercy.';kind='good'}
+ else if(c.adapted){line='The '+name+' has adapted to what it learned from you.';kind='gold'}
+ else{line='The '+name+' seems to recognize you.';kind='muted'}
+ toast(line,kind);
+}
+
 // Every spawned creature can inherit what the player taught its species.
 const oldSpawn=window.spawnCreatureAt;
 if(typeof oldSpawn==='function'&&!oldSpawn.__hb21){
- const f=function(){const c=oldSpawn.apply(this,arguments);applyMemoryToCreature(c);return c};f.__hb21=true;window.spawnCreatureAt=f;
+ const f=function(){const c=oldSpawn.apply(this,arguments);applyMemoryToCreature(c);noteRecognition(c);return c};f.__hb21=true;window.spawnCreatureAt=f;
 }
 const oldSpawnElite=window.spawnEliteCreature;
 if(typeof oldSpawnElite==='function'&&!oldSpawnElite.__hb21){
- const f=function(){const r=oldSpawnElite.apply(this,arguments);const x=s();(x?.creatures||[]).slice(-1).forEach(applyMemoryToCreature);return r};f.__hb21=true;window.spawnEliteCreature=f;
+ const f=function(){const r=oldSpawnElite.apply(this,arguments);const x=s();(x?.creatures||[]).slice(-1).forEach(c=>{applyMemoryToCreature(c);noteRecognition(c)});return r};f.__hb21=true;window.spawnEliteCreature=f;
 }
 
 // Track non-lethal encounters and kills, and make repeat encounters mechanically different.
@@ -19954,7 +19976,7 @@ function rollRun(){
 H.rollRun=rollRun;
 const oldStart=window.startGame;
 if(typeof oldStart==='function'&&!oldStart.__hb21){
- const f=function(){const r=oldStart.apply(this,arguments);setTimeout(()=>{ensureSideQuests();rollRun()},0);return r};f.__hb21=true;window.startGame=f;
+ const f=function(){const r=oldStart.apply(this,arguments);recognizedThisRun=new Set();setTimeout(()=>{ensureSideQuests();rollRun()},0);return r};f.__hb21=true;window.startGame=f;
 }
 
 // Consequence engine: side-quest choices alter persistent ecosystems, factions, companions, and endings.
