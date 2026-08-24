@@ -150,7 +150,7 @@ h1,h2,h3{font-family:var(--font-heading);font-weight:600;letter-spacing:.01em;ma
      carry up to 3 buttons (Unequip/Salvage/Infuse) so they need to wrap
      instead of overflowing; card hand needed a narrow-screen fallback. */
   .modal-inner{padding:var(--sp-4)}
-  .modal-inner .close{width:40px;height:40px;font-size:18px}
+  .modal-inner .close{width:44px;height:44px;font-size:18px}
   .modal-inner .tab{padding:11px 12px;font-size:12.5px}
   .modal-inner .perk-grid{grid-template-columns:1fr 1fr}
   .modal-inner .grid2{grid-template-columns:1fr}
@@ -263,7 +263,7 @@ h1,h2,h3{font-family:var(--font-heading);font-weight:600;letter-spacing:.01em;ma
 @keyframes modalIn{0%{opacity:0}100%{opacity:1}}
 .modal-inner{position:relative;background:linear-gradient(165deg,var(--bg-panel-elev) 0%,var(--bg-panel) 40%);border:1px solid var(--line-strong);border-radius:12px;padding:var(--sp-6);max-width:620px;max-height:84vh;overflow-y:auto;width:90%;box-shadow:0 24px 80px rgba(0,0,0,.6),0 0 0 1px rgba(255,255,255,.05);animation:modalSlide .3s cubic-bezier(.16,1,.3,1)}
 @keyframes modalSlide{0%{transform:translateY(20px) scale(.97);opacity:0}100%{transform:translateY(0) scale(1);opacity:1}}
-.modal-inner .close{position:absolute;top:var(--sp-4);right:var(--sp-4);background:none;border:1px solid var(--line);color:var(--c-muted);border-radius:6px;width:30px;height:30px;font-size:16px;cursor:pointer;transition:all .2s ease}
+.modal-inner .close{position:absolute;top:var(--sp-4);right:var(--sp-4);background:none;border:1px solid var(--line);color:var(--c-muted);border-radius:6px;width:44px;height:44px;font-size:16px;cursor:pointer;transition:all .2s ease}
 .modal-inner .close:hover{border-color:var(--line-strong);color:var(--c-ivory);background:rgba(255,255,255,.04)}
 .modal-inner h2{font-family:var(--font-display);font-size:22px;letter-spacing:.06em;color:var(--c-ivory);margin-bottom:4px;text-shadow:0 0 20px rgba(127,212,238,.12)}
 .modal-inner .sub{color:var(--c-muted);font-size:13px;margin-bottom:var(--sp-4);line-height:1.6}
@@ -4296,7 +4296,22 @@ function drawMiniMapBase(){
    ============================================================ */
 
 /* ---------- modal system ---------- */
+/* Several full-screen systems (this core modal, the Astral Map, the
+   Story/Quests codex, the Codex/Quartermaster/Forge panel) were each
+   built independently over time and never closed one another, so
+   opening one while another was already open would stack them on
+   screen. This closes every other known overlay before a new one
+   opens; each system calls it with its own id so it doesn't close
+   itself. */
+function closeOtherOverlays(except){
+  if(except!=='modal'){try{closeModal();}catch(e){}}
+  if(except!=='hb4'&&window.HB4&&typeof HB4.close==='function'){try{HB4.close();}catch(e){}}
+  if(except!=='hb5'&&window.HB5&&typeof HB5.close==='function'){try{HB5.close();}catch(e){}}
+  if(except!=='hb10'&&window.HB10&&typeof HB10.close==='function'){try{HB10.close();}catch(e){}}
+}
+window.closeOtherOverlays=closeOtherOverlays;
 function openModal(html){
+  closeOtherOverlays('modal');
   const m=document.getElementById('modal');
   const inner=document.getElementById('modalInner');
   inner.innerHTML=html;
@@ -17326,7 +17341,7 @@ let st={act:0,room:0,visited:[],seed:Math.floor(Math.random()*1e9),map:[]};
 function rng(){st.seed=(st.seed*1664525+1013904223)>>>0;return st.seed/4294967296}
 function buildMap(){st.map=[];for(let r=0;r<12;r++){let count=r===0||r===11?1:(r%3===0?3:2);let row=[];for(let i=0;i<count;i++){let t=r===0?'combat':r===11?'boss':r%3===0?(rng()<.5?'elite':'event'):(rng()<.28?'relic':rng()<.45?'event':'combat');row.push({r,i,type:t,id:r+'-'+i});}st.map.push(row)} }
 function type(t){if(t==='boss')return TYPES[5];if(t==='elite')return TYPES[1];if(t==='relic')return TYPES[2];if(t==='event')return TYPES[3];if(t==='anomaly')return TYPES[4];return TYPES[0]}
-function open(){document.getElementById('hb4-root').classList.add('open');document.getElementById('hb4-root').setAttribute('aria-hidden','false');render()}
+function open(){if(typeof window.closeOtherOverlays==='function')window.closeOtherOverlays('hb4');document.getElementById('hb4-root').classList.add('open');document.getElementById('hb4-root').setAttribute('aria-hidden','false');render()}
 function close(){document.getElementById('hb4-root').classList.remove('open');document.getElementById('hb4-root').setAttribute('aria-hidden','true')}
 function toast(x){let e=document.getElementById('hb4-toast');e.textContent=x;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),1700)}
 function choose(node){if(node.r!==st.room)return toast(node.r<st.room?'That path is behind you.':'That path is beyond the current threshold.');st.visited.push(node.id);if(node.type==='boss'){
@@ -17399,7 +17414,7 @@ let qstate={};try{qstate=JSON.parse(localStorage.getItem('hb5quests')||'{}');}ca
 function save(){try{localStorage.setItem('hb5quests',JSON.stringify(qstate));}catch(e){}}
 function ensureQuest(id){if(!qstate[id])qstate[id]={progress:0,done:false};return qstate[id]}
 function progressQuest(id,n=1){let q=QUESTS.flat().find(x=>x[0]===id);if(!q)return;let s=ensureQuest(id);s.progress=Math.min(3,(s.progress||0)+n);save()}
-function open(html){let root=document.getElementById('hb5-cosmos');document.getElementById('hb5-content').innerHTML=html;root.classList.add('open');root.setAttribute('aria-hidden','false')}
+function open(html){if(typeof window.closeOtherOverlays==='function')window.closeOtherOverlays('hb5');let root=document.getElementById('hb5-cosmos');document.getElementById('hb5-content').innerHTML=html;root.classList.add('open');root.setAttribute('aria-hidden','false')}
 function close(){let root=document.getElementById('hb5-cosmos');root.classList.remove('open');root.setAttribute('aria-hidden','true');boss=null}
 function currentAct(){return Math.min(4,(window.HB4State&&HB4State.act)||0)}
 function questBoard(){let a=currentAct(), data=ACTDATA[a], qs=QUESTS[a];
@@ -17927,7 +17942,7 @@ const ASC=['Normal','Depth I','Depth II','Depth III','Depth IV','Depth V','Depth
 function state(){if(!window.S)return null;let s=S;s.hb10=s.hb10||{};let h=s.hb10;h.inventory=h.inventory||[];h.equipped=h.equipped||{};h.factions=h.factions||{};h.companions=h.companions||[];h.affinity=h.affinity||{};h.ascension=Number(h.ascension||0);h.marketSeed=h.marketSeed||Math.floor(Math.random()*999999);h.runChoices=h.runChoices||[];h.storySeen=h.storySeen||[];h.milestones=h.milestones||{};h.upgrades=h.upgrades||{};h.marketRerolls=Number(h.marketRerolls||0);h.sold=h.sold||{};return s}
 function toast(t){let e=document.getElementById('hb10-toast');if(!e)return;e.textContent=t;e.classList.add('on');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('on'),2600)}
 function close(){document.getElementById('hb10-panel').classList.remove('on')};H.close=close;
-function open(tab){state();let p=document.getElementById('hb10-panel');p.classList.add('on');render(tab||'codex')};H.open=open;
+function open(tab){if(typeof window.closeOtherOverlays==='function')window.closeOtherOverlays('hb10');state();let p=document.getElementById('hb10-panel');p.classList.add('on');render(tab||'codex')};H.open=open;
 function tabs(active){let a=['codex','build','forge','shop','quests','factions','companions','meta','run'];document.getElementById('hb10-tabs').innerHTML=a.map(x=>`<button class="hb10-tab ${x===active?'on':''}" onclick="HB10.open('${x}')">${x}</button>`).join('')}
 function render(tab){let s=state();if(!s)return;tabs(tab);let title=tab.toUpperCase();document.getElementById('hb10-title').textContent=title;let c=document.getElementById('hb10-content');
  if(tab==='codex') return c.innerHTML=codex(s);
