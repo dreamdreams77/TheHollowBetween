@@ -119,21 +119,3 @@ disconnected from the main story, that's accurate - it is.
   factions. They're kept *coherent* with each other (either can unlock the
   same ending) rather than merged into one number, since merging them
   outright would break both systems' pacing.
-
-## Recent fixes
-
-- Fixed a crash that occurred on every fresh page load, before the title
-  screen even finished loading.
-- Added save export/import (text-code based, works on mobile) plus a
-  "Restore a Save Code" option on the title screen.
-- Expedition summary now shows biome, depth, relics gained, companion, and
-  an accurate cause of death (previously only kills/XP/gold/discoveries).
-- Added a short, skippable, milestone-based tutorial for first-time
-  characters; it never appears for saves that predate this feature.
-- Fixed the Story/Quests panel not closing once you'd started a Guardian
-  boss fight, and fixed "Face the Guardian" crashing outright.
-- Fixed several floating buttons (Astral Map, Story/Quests, Command Deck,
-  the shop/forge toolbar, on-screen combat controls) rendering on top of
-  the title screen before a game had started.
-- Fixed the Command Deck opening a blank panel when clicked with no
-  character yet created.
